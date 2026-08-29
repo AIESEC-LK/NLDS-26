@@ -1,5 +1,3 @@
-"use client";
-
 import { useFormContext, useWatch } from "react-hook-form";
 import { READINESS_OPTIONS } from "@/lib/register/constants";
 import SectionLabel from "@/components/register/SectionLabel";
