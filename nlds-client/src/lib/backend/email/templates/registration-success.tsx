@@ -1,9 +1,19 @@
 import * as React from "react";
 import { EmailShell } from "../components/EmailShell";
-import { Text, Section, Hr, Row, Column, Img } from "@react-email/components";
+import {
+    Text,
+    Section,
+    Hr,
+    Row,
+    Column,
+    Img,
+    Link,
+    Button
+} from "@react-email/components";
 
 interface RegistrationSuccessEmailProps {
-    missionId: string;
+    missionId?: string;
+    recipientName?: string;
 }
 
 interface VPContact {
@@ -15,93 +25,122 @@ interface VPContact {
 
 const VP_CONTACTS: VPContact[] = [
     {
-        name: "Agent Sarah Chen",
-        position: "VP of Operations",
-        phone: "+94 77 123 4567",
-        email: "sarah.chen@aiesec.lk"
+        name: "Sayuri Pathirana",
+        position: "Organizing Committee Vice President - Delegates",
+        phone: "+94 76 415 4527",
+        email: "sayuri.pathirana@aiesec.net",
     },
     {
-        name: "Agent Marcus Webb",
-        position: "VP of Talent",
-        phone: "+94 77 234 5678",
-        email: "marcus.webb@aiesec.lk"
+        name: "Monali Edirisinghe",
+        position: "Organizing Committee Vice President - Delegates",
+        phone: "+94 74 243 0091",
+        email: "monaliedirisinghe@aiesec.net"
     },
     {
-        name: "Agent Elena Rodriguez",
-        position: "VP of Partnerships",
-        phone: "+94 77 345 6789",
-        email: "elena.rodriguez@aiesec.lk"
+        name: "Sayuni Salwathura",
+        position: "Organizing Committee Vice President - Delegates",
+        phone: "+94 71 176 7132",
+        email: "sayuni.salwathura@aiesec.net"
     }
 ];
 
-export const RegistrationSuccessEmail = ({
-    missionId,
-}: RegistrationSuccessEmailProps) => {
+export const RegistrationSuccessEmail: React.FC<RegistrationSuccessEmailProps> = ({
+    missionId = "IMF-NLDS-2026-X88",
+    recipientName = "AGENT",
+}) => {
     return (
         <EmailShell previewText="MISSION RECEIVED | Your NLDS 2026 application is under review">
-            {/* Top Secret Stamp with Logo Placeholder */}
-            <Section style={topBar}>
+
+            {/* Top Classified Security HUD Header */}
+            <Section style={hudTopBar}>
                 <Row>
-                    <Column style={stampCol}>
-                        <Text style={stamp}>▲ CLASSIFIED ▲</Text>
+                    <Column style={hudColLeft}>
+                        <Text style={hudBlink}>● IMF UPLINK ACTIVE</Text>
                     </Column>
-                    <Column style={logoCol}>
-                        <Text style={logoText}>NLDS 2026</Text>
+                    <Column style={hudColCenter}>
+                        <Text style={hudClassification}>CLASSIFIED // TOP SECRET</Text>
                     </Column>
-                    <Column style={stampCol}>
-                        <Text style={stamp}>EYES ONLY</Text>
+                    <Column style={hudColRight}>
+                        <Text style={hudClearance}>CLEARANCE: OMEGA</Text>
                     </Column>
                 </Row>
             </Section>
 
-            {/* Hero Section - Bold Header like reference image */}
+            {/* Cinematic Hero Section */}
             <Section style={heroContainer}>
-                <Text style={heroPrefix}>▸ MISSION IMPOSSIBLE ◂</Text>
-                <Text style={heroTitle}>
-                    DEAR FUTURE
-                    <br />
-                    <span style={heroTitleHighlight}>AGENT</span>
-                </Text>
-                <Text style={heroSubtitle}>NLDS 2026</Text>
-
-                {/* Decorative line */}
-                <Section style={decorativeLine}>
-                    <Text style={lineSymbol}>◆ ◆ ◆ ◆ ◆</Text>
+                {/* Tactical Emblem Badge */}
+                <Section style={emblemContainer}>
+                    <Img
+                        src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=140&h=140&q=80"
+                        alt="IMF Tactical Crest"
+                        width="68"
+                        height="68"
+                        style={tacticalEmblem}
+                    />
                 </Section>
+
+                <Text style={protocolCode}>DIRECTIVE REF: NLDS-LK-2026</Text>
+
+                <Text style={heroTitle}>
+                    MISSION
+                    <br />
+                    <span style={heroTitleHighlight}>RECEIVED.</span>
+                </Text>
+
+                <Text style={heroSubtitle}>
+                    DEAR FUTURE {recipientName.toUpperCase()}
+                </Text>
+
+                {/* Reticle / Crosshair Divider */}
+                <Row style={reticleRow}>
+                    <Column style={reticleLine} />
+                    <Column style={reticleScope}>⌖</Column>
+                    <Column style={reticleLine} />
+                </Row>
             </Section>
 
-            {/* Main Content */}
-            <Section style={contentContainer}>
-                <Text style={paragraph}>
-                    Your application has been <span style={highlightText}>successfully received</span>.
+            {/* Narrative Briefing Dossier */}
+            <Section style={dossierCard}>
+                <Text style={leadParagraph}>
+                    Your application has been <span style={textHighlight}>successfully received</span>.
                     <br />
-                    <span style={redText}>But this is only the beginning.</span>
+                    <span style={textRedAlert}>But this is only the beginning.</span>
                 </Text>
 
-                <Text style={paragraph}>
-                    Your profile has now entered <span style={highlightText}>MISSION CONTROL</span>,
-                    where every application will be carefully reviewed. Out of the many who
-                    step forward, only those selected will receive clearance to join the mission.
+                <Text style={bodyParagraph}>
+                    Your profile has now entered <span style={textHighlight}>MISSION CONTROL</span>, where
+                    every candidate will be thoroughly vetted. Out of the many operatives who step
+                    forward, only those selected will receive official clearance to deploy into the mission arena.
                 </Text>
 
-                <Text style={paragraph}>
-                    At <span style={highlightText}>NLDS 2026</span>, you'll be challenged to{" "}
-                    <span style={highlightText}>
-                        think beyond limits, work with unexpected allies,
-                        discover new perspectives, and create stories worth bringing back home.
+                {/* Tactical Operation Banner */}
+                <Section style={bannerWrapper}>
+                    <Img
+                        src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1200&q=80"
+                        alt="Mission Control Center"
+                        style={cinematicBanner}
+                    />
+                    <Section style={bannerOverlay}>
+                        <Text style={bannerOverlayText}>IMPOSSIBLE MISSIONS FORCE // ACTIVE SURVEILLANCE</Text>
+                    </Section>
+                </Section>
+
+                <Text style={bodyParagraph}>
+                    At <span style={textHighlight}>NLDS 2026</span>, you will be challenged to{" "}
+                    <span style={textHighlight}>
+                        think beyond limits, operate alongside unexpected allies, uncover new perspectives,
+                        and forge stories worth bringing back home.
                     </span>
                 </Text>
             </Section>
 
-            {/* Mission Brief - Big Bold Section */}
-            <Section style={briefContainer}>
-                <Text style={briefLabel}>// MISSION BRIEF //</Text>
+            {/* Primary Directive Callout Box */}
+            <Section style={directiveContainer}>
+                <Text style={directiveTag}>// PRIMARY PROTOCOL //</Text>
 
-                <Text style={briefText}>
-                    For now, your mission is simple:
-                </Text>
+                <Text style={directiveSub}>For now, your mission is simple:</Text>
 
-                <Text style={objective}>
+                <Text style={directiveAction}>
                     STAY ALERT.
                     <br />
                     STAY READY.
@@ -109,446 +148,594 @@ export const RegistrationSuccessEmail = ({
                     AWAIT YOUR CLEARANCE.
                 </Text>
 
-                <Text style={fateText}>Your fate will be revealed soon.</Text>
+                <Text style={directiveFate}>Your fate will be revealed soon.</Text>
             </Section>
 
-            {/* Status Dossier - Like reference image style */}
-            <Section style={statusContainer}>
-                <Text style={statusHeader}>▸ MISSION DOSSIER ◂</Text>
+            {/* Mission Dossier Status Matrix */}
+            <Section style={matrixContainer}>
+                <Text style={matrixHeader}>▸ MISSION DOSSIER SPECIFICATIONS ◂</Text>
 
-                <Row style={statusRow}>
-                    <Column style={statusLabelCol}>
-                        <Text style={statusLabel}>MISSION STATUS</Text>
+                <Row style={matrixRow}>
+                    <Column style={matrixKeyCol}>
+                        <Text style={matrixKey}>MISSION STATUS</Text>
                     </Column>
-                    <Column style={statusValueCol}>
-                        <Text style={statusValue}>APPLICATION RECEIVED</Text>
+                    <Column style={matrixValCol}>
+                        <Text style={badgeGreen}>APPLICATION RECEIVED</Text>
                     </Column>
                 </Row>
 
-                <Row style={statusRow}>
-                    <Column style={statusLabelCol}>
-                        <Text style={statusLabel}>ACCESS LEVEL</Text>
+                <Row style={matrixRow}>
+                    <Column style={matrixKeyCol}>
+                        <Text style={matrixKey}>ACCESS LEVEL</Text>
                     </Column>
-                    <Column style={statusValueCol}>
-                        <Text style={statusValue}>UNDER REVIEW</Text>
-                    </Column>
-                </Row>
-
-                <Row style={statusRow}>
-                    <Column style={statusLabelCol}>
-                        <Text style={statusLabel}>MISSION DATES</Text>
-                    </Column>
-                    <Column style={statusValueCol}>
-                        <Text style={statusValue}>09 • 10 • 11 OCTOBER 2026</Text>
+                    <Column style={matrixValCol}>
+                        <Text style={badgeAmber}>UNDER REVIEW</Text>
                     </Column>
                 </Row>
 
-                <Row style={statusRow}>
-                    <Column style={statusLabelCol}>
-                        <Text style={statusLabel}>MISSION ID</Text>
+                <Row style={matrixRow}>
+                    <Column style={matrixKeyCol}>
+                        <Text style={matrixKey}>OPERATION TIMELINE</Text>
                     </Column>
-                    <Column style={statusValueCol}>
-                        <Text style={statusValue}>{missionId}</Text>
+                    <Column style={matrixValCol}>
+                        <Text style={matrixVal}>9TH, 10TH &amp; 11TH OCTOBER 2026</Text>
+                    </Column>
+                </Row>
+
+                <Row style={matrixRow}>
+                    <Column style={matrixKeyCol}>
+                        <Text style={matrixKey}>ENCRYPTED ID</Text>
+                    </Column>
+                    <Column style={matrixValCol}>
+                        <Text style={badgeMonoRed}>{missionId}</Text>
                     </Column>
                 </Row>
             </Section>
 
-            {/* Quote Section with Visual Element */}
+            {/* Directive Quote Element */}
             <Section style={quoteContainer}>
-                <Row>
-                    <Column style={quoteLineCol}>
-                        <Text style={quoteLine}>▬▬▬▬▬</Text>
-                    </Column>
-                    <Column style={quoteContentCol}>
-                        <Text style={quote}>
-                            "Until your clearance arrives, consider this your first mission:"
-                        </Text>
-                        <Text style={quoteHighlight}>
-                            Stay curious.
-                        </Text>
-                    </Column>
-                    <Column style={quoteLineCol}>
-                        <Text style={quoteLine}>▬▬▬▬▬</Text>
-                    </Column>
-                </Row>
+                <Text style={quotePrefix}>"Until your clearance arrives, consider this your first mission:"</Text>
+                <Text style={quoteMain}>Stay curious.</Text>
+                <Section style={quoteBar} />
             </Section>
 
-            {/* Signature */}
-            <Section style={signatureContainer}>
-                <Text style={closing}>
-                    MISSION CONTROL
+            {/* Merch / Field Kit Intercept Teaser */}
+            <Section style={merchInterceptContainer}>
+                <Text style={merchHeader}>▸ IMF FIELD GEAR PROTOCOL ◂</Text>
+                <Img
+                    src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80"
+                    alt="Tactical Merchandise Kit"
+                    style={merchImage}
+                />
+                <Button style={merchButton} href="https://aiesec.lk">
+                    SECURE YOUR GEAR PACK
+                </Button>
+            </Section>
+
+            {/* Mission Command Authority Signature */}
+            <Section style={commandSignature}>
+                <Text style={cmdTitle}>MISSION CONTROL</Text>
+                <Text style={cmdEvent}>NLDS 2026</Text>
+                <Text style={cmdOrg}>AIESEC IN SRI LANKA</Text>
+            </Section>
+
+            {/* Handler Contact Dossiers (3 Delegate VPs) */}
+            <Section style={handlerContainer}>
+                <Text style={handlerHeader}>▸ CONTACT YOUR FIELD HANDLERS ◂</Text>
+
+                {VP_CONTACTS.map((vp, index) => (
+                    <Section key={index} style={handlerCard}>
+                        <Row>
+                            <Column style={handlerInfoCol}>
+                                <Text style={handlerName}>{vp.name}</Text>
+                                <Text style={handlerPosition}>{vp.position}</Text>
+
+                                <Text style={handlerMeta}>
+                                    <span style={handlerLabel}>MOBILE: </span>
+                                    <Link href={`tel:${vp.phone.replace(/\s+/g, '')}`} style={handlerLink}>
+                                        {vp.phone}
+                                    </Link>
+                                </Text>
+
+                                <Text style={handlerMeta}>
+                                    <span style={handlerLabel}>UPLINK: </span>
+                                    <Link href={`mailto:${vp.email}`} style={handlerLink}>
+                                        {vp.email}
+                                    </Link>
+                                </Text>
+                            </Column>
+                        </Row>
+                        {index < VP_CONTACTS.length - 1 && <Hr style={handlerDivider} />}
+                    </Section>
+                ))}
+            </Section>
+
+            {/* Self-Destruct Footer Sequence */}
+            <Section style={footerContainer}>
+                <Text style={selfDestructText}>
+                    ⚠ THIS TRANSMISSION WILL SELF-DESTRUCT IN 5 SECONDS ⚠
                 </Text>
-                <Text style={signature}>
-                    NLDS 2026
-                </Text>
-                <Text style={muted}>
-                    AIESEC in Sri Lanka
+                <Text style={footerDisclaimer}>
+                    IMF SECURE TRANSMISSION // AIESEC IN SRI LANKA // ALL RIGHTS RESERVED
                 </Text>
             </Section>
 
-            {/* VP Contacts - Centered Grid */}
-            <Section style={vpContainer}>
-                <Text style={vpHeader}>▸ CONTACT YOUR HANDLER ◂</Text>
-
-                <Section style={vpGrid}>
-                    {VP_CONTACTS.map((vp, index) => (
-                        <Section key={index} style={vpCard}>
-                            <Text style={vpName}>{vp.name}</Text>
-                            <Text style={vpPosition}>{vp.position}</Text>
-                            <Text style={vpPhone}>{vp.phone}</Text>
-                            <Text style={vpEmail}>{vp.email}</Text>
-                            {index < VP_CONTACTS.length - 1 && <Hr style={vpDivider} />}
-                        </Section>
-                    ))}
-                </Section>
-            </Section>
-
-            {/* Footer */}
-            <Text style={classifiedBottom}>
-                END OF TRANSMISSION • THIS MESSAGE WILL SELF-DESTRUCT
-            </Text>
         </EmailShell>
     );
 };
 
 /* ─────────────────────────────────────────────
-   STYLES - ENHANCED CREATIVE THEME
+   TACTICAL MISSION IMPOSSIBLE CSS-IN-JS
 ───────────────────────────────────────────── */
 
-const topBar = {
-    marginBottom: '25px',
-    padding: '10px 0',
-    borderBottom: '1px solid #1A1A1A',
-    borderTop: '1px solid #1A1A1A',
+const hudTopBar = {
+    backgroundColor: "#0A0A0E",
+    borderBottom: "1px solid #1E1E26",
+    padding: "10px 14px",
+    marginBottom: "28px",
 };
 
-const stampCol = {
-    width: '30%',
-    textAlign: 'center' as const,
-};
+const hudColLeft = { width: "33%", textAlign: "left" as const };
+const hudColCenter = { width: "34%", textAlign: "center" as const };
+const hudColRight = { width: "33%", textAlign: "right" as const };
 
-const logoCol = {
-    width: '40%',
-    textAlign: 'center' as const,
-};
-
-const stamp = {
-    color: "#EA0000",
-    fontSize: "8px",
+const hudBlink = {
+    color: "#FF2424",
+    fontSize: "9px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
-    letterSpacing: "0.25em",
+    letterSpacing: "0.08em",
     margin: "0",
-    textTransform: "uppercase" as const,
 };
 
-const logoText = {
-    color: "#FFFFFF",
-    fontSize: "14px",
+const hudClassification = {
+    color: "#E4E4E7",
+    fontSize: "9px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "900",
-    letterSpacing: "0.15em",
+    letterSpacing: "0.18em",
+    margin: "0",
+};
+
+const hudClearance = {
+    color: "#71717A",
+    fontSize: "9px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    fontWeight: "bold",
+    letterSpacing: "0.08em",
     margin: "0",
 };
 
 const heroContainer = {
-    marginBottom: '30px',
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
+    marginBottom: "24px",
 };
 
-const heroPrefix = {
-    color: "#666666",
-    fontSize: "9px",
+const emblemContainer = {
+    marginBottom: "12px",
+    display: "inline-block",
+};
+
+const tacticalEmblem = {
+    borderRadius: "50%",
+    border: "2px solid #FF2424",
+    boxShadow: "0 0 16px rgba(255, 36, 36, 0.4)",
+    display: "inline-block",
+};
+
+const protocolCode = {
+    color: "#A1A1AA",
+    fontSize: "10px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
-    letterSpacing: "0.3em",
-    margin: "0 0 15px 0",
-    textTransform: "uppercase" as const,
+    letterSpacing: "0.25em",
+    margin: "0 0 8px 0",
 };
 
 const heroTitle = {
     color: "#FFFFFF",
-    fontSize: "48px",
-    lineHeight: "1.1",
+    fontSize: "46px",
+    lineHeight: "0.95",
     fontWeight: "900",
-    letterSpacing: "0.05em",
-    margin: "0 0 5px 0",
-    textTransform: "uppercase" as const,
-    textShadow: "0 0 40px rgba(234, 0, 0, 0.2)",
+    fontFamily: "'Arial Black', Impact, sans-serif",
+    letterSpacing: "-0.01em",
+    margin: "0 0 10px 0",
+    textShadow: "0 0 35px rgba(255, 36, 36, 0.35)",
 };
 
 const heroTitleHighlight = {
-    color: "#EA0000",
-    textShadow: "0 0 60px rgba(234, 0, 0, 0.3)",
+    color: "#FF2424",
 };
 
 const heroSubtitle = {
-    color: "#888888",
-    fontSize: "16px",
-    fontWeight: "bold",
-    letterSpacing: "0.2em",
-    margin: "0 0 15px 0",
-};
-
-const decorativeLine = {
-    margin: "10px 0",
-};
-
-const lineSymbol = {
-    color: "#333333",
-    fontSize: "10px",
-    letterSpacing: "0.3em",
-    margin: "0",
-};
-
-const contentContainer = {
-    marginBottom: '15px',
-};
-
-const paragraph = {
-    color: "#D8D0C7",
+    color: "#F4F4F5",
     fontSize: "15px",
-    lineHeight: "2",
-    margin: "0 0 20px 0",
+    fontWeight: "800",
+    letterSpacing: "0.22em",
+    margin: "10px 0 16px 0",
 };
 
-const redText = {
-    color: "#EA0000",
+const reticleRow = {
+    margin: "12px 0 20px 0",
 };
 
-const highlightText = {
+const reticleLine = {
+    height: "1px",
+    backgroundColor: "#27272A",
+    width: "44%",
+};
+
+const reticleScope = {
+    width: "12%",
+    color: "#FF2424",
+    fontSize: "14px",
+    lineHeight: "1",
+    textAlign: "center" as const,
+};
+
+const dossierCard = {
+    backgroundColor: "#0D0D12",
+    border: "1px solid #1E1E26",
+    borderRadius: "6px",
+    padding: "24px 20px",
+    marginBottom: "24px",
+};
+
+const leadParagraph = {
+    color: "#D4D4D8",
+    fontSize: "16px",
+    lineHeight: "1.7",
+    margin: "0 0 16px 0",
+};
+
+const bodyParagraph = {
+    color: "#A1A1AA",
+    fontSize: "14px",
+    lineHeight: "1.8",
+    margin: "0 0 16px 0",
+};
+
+const textHighlight = {
     color: "#FFFFFF",
     fontWeight: "bold",
 };
 
-const briefContainer = {
-    marginTop: "30px",
-    marginBottom: "30px",
-    padding: "35px 25px",
-    backgroundColor: "#080808",
-    border: "1px solid #1A1A1A",
-    borderLeft: "5px solid #EA0000",
+const textRedAlert = {
+    color: "#FF2424",
+    fontWeight: "800",
+};
+
+const bannerWrapper = {
     borderRadius: "4px",
+    overflow: "hidden" as const,
+    border: "1px solid #27272A",
+    margin: "20px 0",
 };
 
-const briefLabel = {
-    color: "#666666",
+const cinematicBanner = {
+    width: "100%",
+    height: "160px",
+    objectFit: "cover" as const,
+    display: "block",
+};
+
+const bannerOverlay = {
+    backgroundColor: "rgba(10, 10, 14, 0.85)",
+    padding: "6px 10px",
+    borderTop: "1px solid rgba(255, 36, 36, 0.4)",
+};
+
+const bannerOverlayText = {
+    color: "#E4E4E7",
     fontSize: "9px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    letterSpacing: "0.15em",
+    margin: "0",
+    textAlign: "center" as const,
+};
+
+const directiveContainer = {
+    backgroundColor: "#140507",
+    border: "1px solid #4D090C",
+    borderLeft: "4px solid #FF2424",
+    borderRadius: "4px",
+    padding: "24px 20px",
+    marginBottom: "24px",
+    textAlign: "center" as const,
+};
+
+const directiveTag = {
+    color: "#FF6B6B",
+    fontSize: "10px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
-    letterSpacing: "0.25em",
+    letterSpacing: "0.22em",
     margin: "0 0 10px 0",
-    textTransform: "uppercase" as const,
 };
 
-const briefText = {
-    color: "#D8D0C7",
-    fontSize: "14px",
-    margin: "0 0 15px 0",
+const directiveSub = {
+    color: "#D4D4D8",
+    fontSize: "13px",
+    margin: "0 0 14px 0",
 };
 
-const objective = {
+const directiveAction = {
     color: "#FFFFFF",
     fontSize: "22px",
     fontWeight: "900",
-    lineHeight: "1.8",
+    lineHeight: "1.6",
     letterSpacing: "0.12em",
-    margin: "0 0 15px 0",
-    textShadow: "0 0 30px rgba(234, 0, 0, 0.15)",
+    margin: "0 0 14px 0",
+    textShadow: "0 0 20px rgba(255, 36, 36, 0.25)",
 };
 
-const fateText = {
-    color: "#888888",
-    fontSize: "13px",
+const directiveFate = {
+    color: "#A1A1AA",
+    fontSize: "12px",
     fontStyle: "italic",
     margin: "0",
 };
 
-const statusContainer = {
-    marginTop: "30px",
-    marginBottom: "30px",
-    padding: "25px 20px",
-    backgroundColor: "#050505",
-    border: "1px solid #1A1A1A",
+const matrixContainer = {
+    backgroundColor: "#0A0A0E",
+    border: "1px solid #1E1E26",
     borderRadius: "4px",
+    padding: "20px",
+    marginBottom: "28px",
 };
 
-const statusHeader = {
-    color: "#EA0000",
+const matrixHeader = {
+    color: "#FF2424",
     fontSize: "10px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
-    letterSpacing: "0.3em",
-    margin: "0 0 20px 0",
-    paddingBottom: "12px",
-    borderBottom: "1px solid #1A1A1A",
-    textAlign: "center" as const,
-    textTransform: "uppercase" as const,
-};
-
-const statusRow = {
-    marginBottom: "14px",
-};
-
-const statusLabelCol = {
-    width: "40%",
-};
-
-const statusValueCol = {
-    width: "60%",
-};
-
-const statusLabel = {
-    color: "#666666",
-    fontSize: "9px",
     letterSpacing: "0.2em",
-    margin: "0",
-    textTransform: "uppercase" as const,
+    textAlign: "center" as const,
+    margin: "0 0 16px 0",
+    paddingBottom: "10px",
+    borderBottom: "1px solid #1E1E26",
 };
 
-const statusValue = {
-    color: "#F1ECE5",
-    fontSize: "13px",
+const matrixRow = {
+    padding: "7px 0",
+};
+
+const matrixKeyCol = { width: "42%" };
+const matrixValCol = { width: "58%", textAlign: "right" as const };
+
+const matrixKey = {
+    color: "#71717A",
+    fontSize: "10px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
     letterSpacing: "0.08em",
     margin: "0",
-    textAlign: "right" as const,
 };
 
-const quoteContainer = {
-    marginTop: "35px",
-    marginBottom: "35px",
-    padding: "20px 0",
-};
-
-const quoteLineCol = {
-    width: "15%",
-    textAlign: "center" as const,
-};
-
-const quoteContentCol = {
-    width: "70%",
-    textAlign: "center" as const,
-};
-
-const quoteLine = {
-    color: "#333333",
-    fontSize: "10px",
+const matrixVal = {
+    color: "#F4F4F5",
+    fontSize: "12px",
+    fontWeight: "bold",
     margin: "0",
 };
 
-const quote = {
-    color: "#A8A09A",
-    fontSize: "14px",
-    lineHeight: "1.8",
-    fontStyle: "italic",
+const badgeGreen = {
+    color: "#4ADE80",
+    fontSize: "11px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    fontWeight: "bold",
+    margin: "0",
+};
+
+const badgeAmber = {
+    color: "#FBBF24",
+    fontSize: "11px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    fontWeight: "bold",
+    margin: "0",
+};
+
+const badgeMonoRed = {
+    color: "#FF4545",
+    fontSize: "11px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    fontWeight: "bold",
+    margin: "0",
+};
+
+const quoteContainer = {
+    textAlign: "center" as const,
+    padding: "16px 20px",
+    marginBottom: "32px",
+};
+
+const quotePrefix = {
+    color: "#71717A",
+    fontSize: "11px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    letterSpacing: "0.06em",
     margin: "0 0 8px 0",
 };
 
-const quoteHighlight = {
-    color: "#EA0000",
-    fontSize: "20px",
+const quoteMain = {
+    color: "#FFFFFF",
+    fontSize: "24px",
+    fontWeight: "900",
+    letterSpacing: "0.15em",
+    margin: "0 0 10px 0",
+};
+
+const quoteBar = {
+    width: "48px",
+    height: "2px",
+    backgroundColor: "#FF2424",
+    margin: "0 auto",
+};
+
+const merchInterceptContainer = {
+    backgroundColor: "#0A0A0E",
+    border: "1px solid #1E1E26",
+    borderRadius: "6px",
+    padding: "20px",
+    textAlign: "center" as const,
+    marginBottom: "32px",
+};
+
+const merchHeader = {
+    color: "#A1A1AA",
+    fontSize: "10px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
+    letterSpacing: "0.2em",
+    margin: "0 0 14px 0",
+};
+
+const merchImage = {
+    width: "100%",
+    borderRadius: "4px",
+    marginBottom: "16px",
+};
+
+const merchButton = {
+    backgroundColor: "#FF2424",
+    color: "#FFFFFF",
+    borderRadius: "3px",
+    padding: "12px 26px",
+    fontSize: "11px",
+    fontWeight: "bold",
+    letterSpacing: "0.14em",
+    textDecoration: "none",
+    display: "inline-block",
+};
+
+const commandSignature = {
+    textAlign: "center" as const,
+    marginBottom: "36px",
+};
+
+const cmdTitle = {
+    color: "#FFFFFF",
+    fontSize: "15px",
+    fontWeight: "900",
+    letterSpacing: "0.22em",
+    margin: "0 0 4px 0",
+};
+
+const cmdEvent = {
+    color: "#FF2424",
+    fontSize: "12px",
+    fontWeight: "bold",
+    letterSpacing: "0.16em",
+    margin: "0 0 3px 0",
+};
+
+const cmdOrg = {
+    color: "#71717A",
+    fontSize: "10px",
     letterSpacing: "0.1em",
     margin: "0",
 };
 
-const signatureContainer = {
-    marginTop: "20px",
-    textAlign: "center" as const,
+const handlerContainer = {
+    borderTop: "1px solid #27272A",
+    paddingTop: "24px",
+    marginBottom: "28px",
 };
 
-const closing = {
-    color: "#FFFFFF",
-    fontSize: "16px",
-    fontWeight: "900",
-    letterSpacing: "0.3em",
-    margin: "0 0 4px 0",
-    textTransform: "uppercase" as const,
-};
-
-const signature = {
-    color: "#EA0000",
-    fontSize: "14px",
+const handlerHeader = {
+    color: "#71717A",
+    fontSize: "10px",
+    fontFamily: "Courier, 'Courier New', monospace",
     fontWeight: "bold",
-    letterSpacing: "0.15em",
+    letterSpacing: "0.2em",
+    textAlign: "center" as const,
+    margin: "0 0 20px 0",
+};
+
+const handlerCard = {
+    marginBottom: "12px",
+};
+
+const handlerBadgeCol = {
+    width: "32%",
+    verticalAlign: "top" as const,
+};
+
+const handlerInfoCol = {
+    width: "68%",
+    paddingLeft: "12px",
+};
+
+const handlerCallsign = {
+    color: "#FF2424",
+    fontSize: "9px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    fontWeight: "bold",
+    backgroundColor: "#180608",
+    border: "1px solid #4D090C",
+    borderRadius: "3px",
+    padding: "4px 6px",
+    textAlign: "center" as const,
     margin: "0",
 };
 
-const muted = {
-    color: "#666666",
-    fontSize: "11px",
-    letterSpacing: "0.08em",
-    margin: "4px 0 0 0",
-};
-
-const vpContainer = {
-    marginTop: "40px",
-    paddingTop: "30px",
-    borderTop: "2px solid #1A1A1A",
-};
-
-const vpHeader = {
-    color: "#666666",
-    fontSize: "9px",
-    fontWeight: "bold",
-    letterSpacing: "0.25em",
-    margin: "0 0 20px 0",
-    textAlign: "center" as const,
-    textTransform: "uppercase" as const,
-};
-
-const vpGrid = {
-    display: "flex" as const,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-    flexDirection: "column" as const,
-    maxWidth: "400px",
-    margin: "0 auto",
-};
-
-const vpCard = {
-    textAlign: "center" as const,
-    padding: "12px 0",
-    width: "100%",
-};
-
-const vpName = {
+const handlerName = {
     color: "#FFFFFF",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "bold",
-    letterSpacing: "0.05em",
     margin: "0 0 2px 0",
 };
 
-const vpPosition = {
-    color: "#EA0000",
+const handlerPosition = {
+    color: "#A1A1AA",
     fontSize: "11px",
-    fontWeight: "bold",
-    letterSpacing: "0.08em",
-    margin: "0 0 4px 0",
+    margin: "0 0 6px 0",
 };
 
-const vpPhone = {
-    color: "#999999",
-    fontSize: "12px",
-    letterSpacing: "0.05em",
-    margin: "0",
-};
-
-const vpEmail = {
-    color: "#666666",
+const handlerMeta = {
+    color: "#71717A",
     fontSize: "11px",
-    letterSpacing: "0.05em",
-    margin: "0",
+    margin: "0 0 3px 0",
 };
 
-const vpDivider = {
-    borderColor: "#1A1A1A",
-    margin: "10px 0",
-    width: "60%",
+const handlerLabel = {
+    fontFamily: "Courier, 'Courier New', monospace",
+    color: "#52525B",
 };
 
-const classifiedBottom = {
-    color: "#333333",
-    fontSize: "7px",
-    letterSpacing: "0.3em",
+const handlerLink = {
+    color: "#E4E4E7",
+    textDecoration: "none",
+};
+
+const handlerTextMuted = {
+    color: "#A1A1AA",
+};
+
+const handlerDivider = {
+    borderColor: "#18181C",
+    margin: "14px 0",
+};
+
+const footerContainer = {
     textAlign: "center" as const,
-    margin: "35px 0 0 0",
-    textTransform: "uppercase" as const,
+    padding: "20px 0",
+    borderTop: "1px solid #18181C",
+};
+
+const selfDestructText = {
+    color: "#FF2424",
+    fontSize: "9px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    fontWeight: "bold",
+    letterSpacing: "0.15em",
+    margin: "0 0 6px 0",
+};
+
+const footerDisclaimer = {
+    color: "#3F3F46",
+    fontSize: "8px",
+    fontFamily: "Courier, 'Courier New', monospace",
+    letterSpacing: "0.08em",
+    margin: "0",
 };
