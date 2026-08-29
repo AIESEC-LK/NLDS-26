@@ -137,7 +137,7 @@ export default function AiesecIntel() {
                     </div>
                 ) : (
                     <FormInput
-                        label="Agent, provide your secure channel of communication with the mission team. (AIESEC email)"
+                        label="Agent, provide your secure channel of communication. (AIESEC email)"
                         type="email"
                         placeholder="Enter your AIESEC email (name@aiesec.net)"
                         required={true}

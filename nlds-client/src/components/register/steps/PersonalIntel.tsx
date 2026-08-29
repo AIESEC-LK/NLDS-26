@@ -23,7 +23,7 @@ export default function PersonalIntel() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormInput
-                        label="Agent, state your full name. We need to know who is accepting the mission."
+                        label="Agent, state your full name."
                         placeholder="Enter your full name"
                         hint="Enter your legal name as it appears on official documents."
                         required
@@ -41,7 +41,7 @@ export default function PersonalIntel() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormInput
-                        label="Agent, provide your secure channel of communication with the mission team. (Personal email )"
+                        label="Agent, provide your secure channel of communication. (Personal Email)"
                         type="email"
                         placeholder="your.name@gmail.com"
                         required
@@ -49,7 +49,7 @@ export default function PersonalIntel() {
                         {...register("personalIntel.personalEmail")}
                     />
                     <FormInput
-                        label="Enter a phone number through which the mission team can reach you?"
+                        label="Enter a Reachable phone number for the mission team."
                         type="tel"
                         placeholder="0771234567 or +94771234567"
                         required
