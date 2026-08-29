@@ -274,3 +274,32 @@ enum ReviewDecision {
   ACCEPTED
   REJECTED
 }
+
+model MerchOrder {
+  id              String             @id @default(uuid()) @db.Uuid
+  orderId         String             @unique
+  fullName        String
+  email           String
+  mobileNumber    String
+  entity          String
+  items           Json
+  itemsSummary    String?
+  totalUnits      Int
+  totalAmount     Int
+  paymentStatus   MerchPaymentStatus @default(PENDING_VERIFICATION)
+  receiptDriveUrl String?
+  receiptFileName String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([orderId])
+  @@index([email])
+  @@index([paymentStatus])
+}
+
+enum MerchPaymentStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+  CANCELLED
+}

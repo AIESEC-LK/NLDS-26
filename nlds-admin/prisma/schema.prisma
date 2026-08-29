@@ -115,7 +115,7 @@ model Admin {
   id               String               @id @default(uuid()) @db.Uuid
   email            String               @unique
   passwordHash     String?
-  role             AdminRole            @default(OC_ADMIN)
+  role             AdminRole            @default(OC_VIEWER)
   isActive         Boolean              @default(true)
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
@@ -243,17 +243,18 @@ enum DocumentType {
 
 enum AdminRole {
   SUPER_ADMIN
-  OC_ADMIN
+  OC_VIEWER
 }
 
 enum Permission {
-  VIEW_REGISTRATION
-  REVIEW_REGISTRATION
-  ACCEPT_REGISTRATION
-  REJECT_REGISTRATION
-  DOCUMENT_VIEW
-  VIEW_SENSITIVE_PROFILE
-  MANAGE_ADMINS
+  VIEW_REGISTRATIONS
+  VIEW_PERSONAL_INFO
+  VIEW_AIESEC_INFO
+  VIEW_CV
+  VIEW_PROFILE_PHOTO
+  UPDATE_STATUS
+  VIEW_ANALYTICS
+  EXPORT_DATA
   VIEW_AUDIT_LOGS
 }
 
@@ -272,4 +273,33 @@ enum RequestStatus {
 enum ReviewDecision {
   ACCEPTED
   REJECTED
+}
+
+model MerchOrder {
+  id              String             @id @default(uuid()) @db.Uuid
+  orderId         String             @unique
+  fullName        String
+  email           String
+  mobileNumber    String
+  entity          String
+  items           Json
+  itemsSummary    String?
+  totalUnits      Int
+  totalAmount     Int
+  paymentStatus   MerchPaymentStatus @default(PENDING_VERIFICATION)
+  receiptDriveUrl String?
+  receiptFileName String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([orderId])
+  @@index([email])
+  @@index([paymentStatus])
+}
+
+enum MerchPaymentStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+  CANCELLED
 }

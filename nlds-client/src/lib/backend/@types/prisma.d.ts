@@ -18,6 +18,7 @@ declare module "@prisma/client" {
         adminSession: any;
         oTPChallenge: any;
         externalSync: any;
+        merchOrder: any;
     }
     export namespace Prisma {
         export type ParticipantCreateInput = any;
@@ -25,4 +26,5 @@ declare module "@prisma/client" {
         export type DocumentCreateWithoutRegistrationInput = any;
     }
     export type RegistrationStatus = "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "ACCEPTED" | "REJECTED" | "CANCELLED";
+    export type MerchPaymentStatus = "PENDING_VERIFICATION" | "VERIFIED" | "REJECTED" | "CANCELLED";
 }

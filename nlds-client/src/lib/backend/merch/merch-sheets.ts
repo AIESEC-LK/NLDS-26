@@ -143,6 +143,30 @@ export class MerchSheetsClient {
         },
         // 4. Custom Column Widths
         ...dimensionRequests,
+        // 5. Dropdown Data Validation for Column J (Payment Status)
+        {
+          setDataValidation: {
+            range: {
+              sheetId,
+              startRowIndex: 1,
+              startColumnIndex: 9,
+              endColumnIndex: 10,
+            },
+            rule: {
+              condition: {
+                type: "ONE_OF_LIST",
+                values: [
+                  { userEnteredValue: "PENDING_VERIFICATION" },
+                  { userEnteredValue: "VERIFIED" },
+                  { userEnteredValue: "REJECTED" },
+                  { userEnteredValue: "CANCELLED" },
+                ],
+              },
+              strict: false,
+              showCustomUi: true,
+            },
+          },
+        },
       ];
 
       await this.sheets.spreadsheets.batchUpdate({
@@ -150,7 +174,7 @@ export class MerchSheetsClient {
         requestBody: { requests },
       });
 
-      console.log(`[MerchSheetsClient] Successfully applied NLDS styling to sheet "${sheetName}".`);
+      console.log(`[MerchSheetsClient] Successfully applied NLDS styling and Payment Status dropdown validation to sheet "${sheetName}".`);
     } catch (err: any) {
       console.warn("[MerchSheetsClient] Could not apply styling formatting:", err.message);
     }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma } from "@/lib/backend/db/prisma";
 import { MerchDriveClient } from "@/lib/backend/merch/merch-drive";
 import { MerchSheetsClient } from "@/lib/backend/merch/merch-sheets";
 
@@ -92,7 +93,7 @@ export async function POST(request: Request) {
     const totalAmount = parseInt(totalRaw, 10) || items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
     const totalUnits = items.reduce((sum, i) => sum + i.quantity, 0);
 
-    // Format human-readable item summary for Google Sheet
+    // Format human-readable item summary for Google Sheet and DB
     const itemsSummary = items
       .map((item) => {
         const sizeStr = item.size ? ` [Size: ${item.size}]` : "";
@@ -119,7 +120,26 @@ export async function POST(request: Request) {
       receiptFile.type || "application/octet-stream"
     );
 
-    // 4. Append Order Row to Google Sheets
+    // 4. Persist Order in YugabyteDB (Prisma)
+    console.log(`[Store Order API] Saving order ${orderId} in YugabyteDB...`);
+    await prisma.merchOrder.create({
+      data: {
+        orderId,
+        fullName,
+        email,
+        mobileNumber,
+        entity,
+        items: items as any,
+        itemsSummary,
+        totalUnits,
+        totalAmount,
+        paymentStatus: "PENDING_VERIFICATION",
+        receiptDriveUrl,
+        receiptFileName: driveFileName,
+      },
+    });
+
+    // 5. Append Order Row to Google Sheets
     const sheetsClient = new MerchSheetsClient();
     console.log(`[Store Order API] Appending order ${orderId} to Google Sheet...`);
     await sheetsClient.appendOrder({
@@ -135,7 +155,7 @@ export async function POST(request: Request) {
       receiptDriveUrl,
     });
 
-    console.log(`[Store Order API] Order ${orderId} successfully processed.`);
+    console.log(`[Store Order API] Order ${orderId} successfully processed in DB and Sheets.`);
 
     return NextResponse.json({
       success: true,
