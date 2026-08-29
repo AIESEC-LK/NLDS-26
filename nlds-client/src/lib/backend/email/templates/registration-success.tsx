@@ -1,261 +1,371 @@
 import * as React from "react";
 import { EmailShell } from "../components/EmailShell";
-import { Text, Section, Hr } from "@react-email/components";
+import { Text, Section, Hr, Row, Column, Img } from "@react-email/components";
 
 interface RegistrationSuccessEmailProps {
     missionId: string;
 }
+
+interface VPContact {
+    name: string;
+    position: string;
+    phone: string;
+    email: string;
+}
+
+const VP_CONTACTS: VPContact[] = [
+    {
+        name: "Agent Sarah Chen",
+        position: "VP of Operations",
+        phone: "+94 77 123 4567",
+        email: "sarah.chen@aiesec.lk"
+    },
+    {
+        name: "Agent Marcus Webb",
+        position: "VP of Talent",
+        phone: "+94 77 234 5678",
+        email: "marcus.webb@aiesec.lk"
+    },
+    {
+        name: "Agent Elena Rodriguez",
+        position: "VP of Partnerships",
+        phone: "+94 77 345 6789",
+        email: "elena.rodriguez@aiesec.lk"
+    }
+];
 
 export const RegistrationSuccessEmail = ({
     missionId,
 }: RegistrationSuccessEmailProps) => {
     return (
         <EmailShell previewText="MISSION RECEIVED | Your NLDS 2026 application is under review">
-            {/* Logo / Classified Stamp */}
-            <Section style={stampContainer}>
-                <Text style={stamp}>TOP SECRET // CLEARANCE: EYES ONLY</Text>
+            {/* Top Secret Stamp with Logo Placeholder */}
+            <Section style={topBar}>
+                <Row>
+                    <Column style={stampCol}>
+                        <Text style={stamp}>▲ CLASSIFIED ▲</Text>
+                    </Column>
+                    <Column style={logoCol}>
+                        <Text style={logoText}>NLDS 2026</Text>
+                    </Column>
+                    <Column style={stampCol}>
+                        <Text style={stamp}>EYES ONLY</Text>
+                    </Column>
+                </Row>
             </Section>
 
-            {/* Mission Header */}
-            <Text style={missionTitle}>MISSION RECEIVED.</Text>
-
-            <Text style={missionSubtitle}>
-                Your application has been logged into the system.
-            </Text>
-
-            <Hr style={divider} />
-
-            {/* Greeting */}
-            <Text style={paragraph}>
-                <strong style={white}>Dear Future Agent,</strong>
-            </Text>
-
-            <Text style={paragraph}>
-                Your application has been <strong style={white}>successfully received.</strong>
-                <br />
-                But this is only the beginning.
-            </Text>
-
-            <Text style={paragraph}>
-                Your profile has now entered <strong style={red}>MISSION CONTROL</strong>,
-                where every application will be carefully reviewed. Out of the many who
-                step forward, only those selected will receive clearance to join the mission.
-            </Text>
-
-            <Text style={paragraph}>
-                At <strong style={white}>NLDS 2026</strong>, you'll be challenged to{" "}
-                <strong style={white}>
-                    think beyond limits, work with unexpected allies,
-                    discover new perspectives, and create stories worth bringing back home.
-                </strong>
-            </Text>
-
-            {/* Mission Brief - Interactive Button Style */}
-            <Section style={briefContainer}>
-                <Text style={briefLabel}>
-                    // YOUR NEXT OBJECTIVE
+            {/* Hero Section - Bold Header like reference image */}
+            <Section style={heroContainer}>
+                <Text style={heroPrefix}>▸ MISSION IMPOSSIBLE ◂</Text>
+                <Text style={heroTitle}>
+                    DEAR FUTURE
+                    <br />
+                    <span style={heroTitleHighlight}>AGENT</span>
                 </Text>
+                <Text style={heroSubtitle}>NLDS 2026</Text>
+
+                {/* Decorative line */}
+                <Section style={decorativeLine}>
+                    <Text style={lineSymbol}>◆ ◆ ◆ ◆ ◆</Text>
+                </Section>
+            </Section>
+
+            {/* Main Content */}
+            <Section style={contentContainer}>
+                <Text style={paragraph}>
+                    Your application has been <span style={highlightText}>successfully received</span>.
+                    <br />
+                    <span style={redText}>But this is only the beginning.</span>
+                </Text>
+
+                <Text style={paragraph}>
+                    Your profile has now entered <span style={highlightText}>MISSION CONTROL</span>,
+                    where every application will be carefully reviewed. Out of the many who
+                    step forward, only those selected will receive clearance to join the mission.
+                </Text>
+
+                <Text style={paragraph}>
+                    At <span style={highlightText}>NLDS 2026</span>, you'll be challenged to{" "}
+                    <span style={highlightText}>
+                        think beyond limits, work with unexpected allies,
+                        discover new perspectives, and create stories worth bringing back home.
+                    </span>
+                </Text>
+            </Section>
+
+            {/* Mission Brief - Big Bold Section */}
+            <Section style={briefContainer}>
+                <Text style={briefLabel}>// MISSION BRIEF //</Text>
 
                 <Text style={briefText}>
                     For now, your mission is simple:
                 </Text>
 
                 <Text style={objective}>
-                    STAY ALERT.<br />
-                    STAY READY.<br />
+                    STAY ALERT.
+                    <br />
+                    STAY READY.
+                    <br />
                     AWAIT YOUR CLEARANCE.
                 </Text>
 
-                <Section style={buttonContainer}>
-                    <Text style={button}>ACCESS MISSION DOSSIER</Text>
-                </Section>
+                <Text style={fateText}>Your fate will be revealed soon.</Text>
             </Section>
 
-            <Text style={paragraph}>
-                Your fate will be revealed soon.
-            </Text>
-
-            {/* Status Dossier - Enhanced */}
+            {/* Status Dossier - Like reference image style */}
             <Section style={statusContainer}>
-                <Text style={statusHeader}>
-                    MISSION DOSSIER
-                </Text>
+                <Text style={statusHeader}>▸ MISSION DOSSIER ◂</Text>
 
-                <Section style={statusRow}>
-                    <span style={statusLabel}>MISSION STATUS</span>
-                    <strong style={statusValue}>
-                        APPLICATION RECEIVED
-                    </strong>
-                </Section>
+                <Row style={statusRow}>
+                    <Column style={statusLabelCol}>
+                        <Text style={statusLabel}>MISSION STATUS</Text>
+                    </Column>
+                    <Column style={statusValueCol}>
+                        <Text style={statusValue}>APPLICATION RECEIVED</Text>
+                    </Column>
+                </Row>
 
-                <Section style={statusRow}>
-                    <span style={statusLabel}>ACCESS LEVEL</span>
-                    <strong style={statusValue}>
-                        UNDER REVIEW
-                    </strong>
-                </Section>
+                <Row style={statusRow}>
+                    <Column style={statusLabelCol}>
+                        <Text style={statusLabel}>ACCESS LEVEL</Text>
+                    </Column>
+                    <Column style={statusValueCol}>
+                        <Text style={statusValue}>UNDER REVIEW</Text>
+                    </Column>
+                </Row>
 
-                <Section style={statusRow}>
-                    <span style={statusLabel}>MISSION DATES</span>
-                    <strong style={statusValue}>
-                        09 • 10 • 11 OCTOBER 2026
-                    </strong>
-                </Section>
+                <Row style={statusRow}>
+                    <Column style={statusLabelCol}>
+                        <Text style={statusLabel}>MISSION DATES</Text>
+                    </Column>
+                    <Column style={statusValueCol}>
+                        <Text style={statusValue}>09 • 10 • 11 OCTOBER 2026</Text>
+                    </Column>
+                </Row>
 
-                <Section style={statusRow}>
-                    <span style={statusLabel}>MISSION ID</span>
-                    <strong style={statusValue}>
-                        {missionId}
-                    </strong>
-                </Section>
+                <Row style={statusRow}>
+                    <Column style={statusLabelCol}>
+                        <Text style={statusLabel}>MISSION ID</Text>
+                    </Column>
+                    <Column style={statusValueCol}>
+                        <Text style={statusValue}>{missionId}</Text>
+                    </Column>
+                </Row>
             </Section>
 
-            {/* Final Message - Quote with Cinematic Flair */}
+            {/* Quote Section with Visual Element */}
             <Section style={quoteContainer}>
-                <Text style={quoteMark}>“</Text>
-
-                <Text style={quote}>
-                    Until your clearance arrives, consider this your first mission:
-                    <br />
-                    <strong>Stay curious.</strong>
-                </Text>
+                <Row>
+                    <Column style={quoteLineCol}>
+                        <Text style={quoteLine}>▬▬▬▬▬</Text>
+                    </Column>
+                    <Column style={quoteContentCol}>
+                        <Text style={quote}>
+                            "Until your clearance arrives, consider this your first mission:"
+                        </Text>
+                        <Text style={quoteHighlight}>
+                            Stay curious.
+                        </Text>
+                    </Column>
+                    <Column style={quoteLineCol}>
+                        <Text style={quoteLine}>▬▬▬▬▬</Text>
+                    </Column>
+                </Row>
             </Section>
 
             {/* Signature */}
-            <Text style={closing}>
-                MISSION CONTROL
-            </Text>
+            <Section style={signatureContainer}>
+                <Text style={closing}>
+                    MISSION CONTROL
+                </Text>
+                <Text style={signature}>
+                    NLDS 2026
+                </Text>
+                <Text style={muted}>
+                    AIESEC in Sri Lanka
+                </Text>
+            </Section>
 
-            <Text style={signature}>
-                NLDS 2026
-                <br />
-                <span style={muted}>AIESEC in Sri Lanka</span>
-            </Text>
+            {/* VP Contacts - Centered Grid */}
+            <Section style={vpContainer}>
+                <Text style={vpHeader}>▸ CONTACT YOUR HANDLER ◂</Text>
 
+                <Section style={vpGrid}>
+                    {VP_CONTACTS.map((vp, index) => (
+                        <Section key={index} style={vpCard}>
+                            <Text style={vpName}>{vp.name}</Text>
+                            <Text style={vpPosition}>{vp.position}</Text>
+                            <Text style={vpPhone}>{vp.phone}</Text>
+                            <Text style={vpEmail}>{vp.email}</Text>
+                            {index < VP_CONTACTS.length - 1 && <Hr style={vpDivider} />}
+                        </Section>
+                    ))}
+                </Section>
+            </Section>
+
+            {/* Footer */}
             <Text style={classifiedBottom}>
-                END OF TRANSMISSION • CLASSIFIED
+                END OF TRANSMISSION • THIS MESSAGE WILL SELF-DESTRUCT
             </Text>
         </EmailShell>
     );
 };
 
 /* ─────────────────────────────────────────────
-   STYLES - REVAMPED FOR MISSION IMPOSSIBLE THEME
+   STYLES - ENHANCED CREATIVE THEME
 ───────────────────────────────────────────── */
 
-const stampContainer = {
-    marginBottom: '20px',
+const topBar = {
+    marginBottom: '25px',
+    padding: '10px 0',
+    borderBottom: '1px solid #1A1A1A',
+    borderTop: '1px solid #1A1A1A',
+};
+
+const stampCol = {
+    width: '30%',
+    textAlign: 'center' as const,
+};
+
+const logoCol = {
+    width: '40%',
+    textAlign: 'center' as const,
 };
 
 const stamp = {
     color: "#EA0000",
-    fontSize: "11px",
+    fontSize: "8px",
     fontWeight: "bold",
-    letterSpacing: "0.3em",
+    letterSpacing: "0.25em",
     margin: "0",
     textTransform: "uppercase" as const,
-    border: "1px solid #EA0000",
-    padding: "6px 12px",
-    display: "inline-block",
-    backgroundColor: "#0A0A0A",
 };
 
-const missionTitle = {
+const logoText = {
     color: "#FFFFFF",
-    fontSize: "36px",
+    fontSize: "14px",
+    fontWeight: "900",
+    letterSpacing: "0.15em",
+    margin: "0",
+};
+
+const heroContainer = {
+    marginBottom: '30px',
+    textAlign: 'center' as const,
+};
+
+const heroPrefix = {
+    color: "#666666",
+    fontSize: "9px",
+    fontWeight: "bold",
+    letterSpacing: "0.3em",
+    margin: "0 0 15px 0",
+    textTransform: "uppercase" as const,
+};
+
+const heroTitle = {
+    color: "#FFFFFF",
+    fontSize: "48px",
     lineHeight: "1.1",
     fontWeight: "900",
-    letterSpacing: "0.1em",
-    margin: "0 0 10px 0",
+    letterSpacing: "0.05em",
+    margin: "0 0 5px 0",
     textTransform: "uppercase" as const,
-    textShadow: "0 0 15px rgba(234, 0, 0, 0.4)",
+    textShadow: "0 0 40px rgba(234, 0, 0, 0.2)",
 };
 
-const missionSubtitle = {
-    color: "#AAAAAA",
-    fontSize: "13px",
-    letterSpacing: "0.08em",
-    margin: "0 0 25px 0",
+const heroTitleHighlight = {
+    color: "#EA0000",
+    textShadow: "0 0 60px rgba(234, 0, 0, 0.3)",
 };
 
-const divider = {
-    borderColor: "#242424",
-    margin: "25px 0 25px 0",
+const heroSubtitle = {
+    color: "#888888",
+    fontSize: "16px",
+    fontWeight: "bold",
+    letterSpacing: "0.2em",
+    margin: "0 0 15px 0",
+};
+
+const decorativeLine = {
+    margin: "10px 0",
+};
+
+const lineSymbol = {
+    color: "#333333",
+    fontSize: "10px",
+    letterSpacing: "0.3em",
+    margin: "0",
+};
+
+const contentContainer = {
+    marginBottom: '15px',
 };
 
 const paragraph = {
     color: "#D8D0C7",
     fontSize: "15px",
-    lineHeight: "1.8",
-    margin: "0 0 22px 0",
+    lineHeight: "2",
+    margin: "0 0 20px 0",
 };
 
-const white = {
-    color: "#FFFFFF",
-};
-
-const red = {
+const redText = {
     color: "#EA0000",
 };
 
+const highlightText = {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+};
+
 const briefContainer = {
-    marginTop: "35px",
+    marginTop: "30px",
     marginBottom: "30px",
-    padding: "25px 25px",
-    backgroundColor: "#0A0A0A",
-    border: "1px solid #333",
+    padding: "35px 25px",
+    backgroundColor: "#080808",
+    border: "1px solid #1A1A1A",
     borderLeft: "5px solid #EA0000",
     borderRadius: "4px",
-    boxShadow: "0 0 20px rgba(234, 0, 0, 0.1)",
 };
 
 const briefLabel = {
     color: "#666666",
-    fontSize: "10px",
+    fontSize: "9px",
     fontWeight: "bold",
     letterSpacing: "0.25em",
-    margin: "0 0 14px 0",
+    margin: "0 0 10px 0",
+    textTransform: "uppercase" as const,
 };
 
 const briefText = {
     color: "#D8D0C7",
     fontSize: "14px",
-    margin: "0 0 18px 0",
+    margin: "0 0 15px 0",
 };
 
 const objective = {
     color: "#FFFFFF",
-    fontSize: "18px",
+    fontSize: "22px",
     fontWeight: "900",
-    lineHeight: "1.7",
+    lineHeight: "1.8",
     letterSpacing: "0.12em",
-    margin: "0 0 25px 0",
-    textShadow: "0 0 10px rgba(234, 0, 0, 0.3)",
+    margin: "0 0 15px 0",
+    textShadow: "0 0 30px rgba(234, 0, 0, 0.15)",
 };
 
-const buttonContainer = {
-    backgroundColor: "#EA0000",
-    padding: "12px 20px",
-    textAlign: "center" as const,
-    borderRadius: "4px",
-    width: "fit-content",
-};
-
-const button = {
-    color: "#FFFFFF",
-    fontSize: "12px",
-    fontWeight: "bold",
-    letterSpacing: "0.2em",
+const fateText = {
+    color: "#888888",
+    fontSize: "13px",
+    fontStyle: "italic",
     margin: "0",
-    textTransform: "uppercase" as const,
 };
 
 const statusContainer = {
-    marginTop: "35px",
-    marginBottom: "35px",
+    marginTop: "30px",
+    marginBottom: "30px",
     padding: "25px 20px",
     backgroundColor: "#050505",
-    border: "1px solid #242424",
+    border: "1px solid #1A1A1A",
     borderRadius: "4px",
 };
 
@@ -264,44 +374,62 @@ const statusHeader = {
     fontSize: "10px",
     fontWeight: "bold",
     letterSpacing: "0.3em",
-    margin: "0 0 22px 0",
-    paddingBottom: "14px",
-    borderBottom: "1px solid #242424",
+    margin: "0 0 20px 0",
+    paddingBottom: "12px",
+    borderBottom: "1px solid #1A1A1A",
+    textAlign: "center" as const,
+    textTransform: "uppercase" as const,
 };
 
 const statusRow = {
-    margin: "0 0 18px 0",
+    marginBottom: "14px",
+};
+
+const statusLabelCol = {
+    width: "40%",
+};
+
+const statusValueCol = {
+    width: "60%",
 };
 
 const statusLabel = {
     color: "#666666",
     fontSize: "9px",
     letterSpacing: "0.2em",
-    display: "block",
-    marginBottom: "4px",
+    margin: "0",
+    textTransform: "uppercase" as const,
 };
 
 const statusValue = {
     color: "#F1ECE5",
-    fontSize: "14px",
+    fontSize: "13px",
+    fontWeight: "bold",
     letterSpacing: "0.08em",
-    display: "block",
+    margin: "0",
+    textAlign: "right" as const,
 };
 
 const quoteContainer = {
     marginTop: "35px",
     marginBottom: "35px",
-    padding: "10px 0 10px 25px",
-    borderLeft: "3px solid #EA0000",
-    backgroundColor: "rgba(234, 0, 0, 0.03)",
+    padding: "20px 0",
 };
 
-const quoteMark = {
-    color: "#EA0000",
-    fontSize: "32px",
-    lineHeight: "1",
-    margin: "0 0 -10px 0",
-    opacity: "0.6",
+const quoteLineCol = {
+    width: "15%",
+    textAlign: "center" as const,
+};
+
+const quoteContentCol = {
+    width: "70%",
+    textAlign: "center" as const,
+};
+
+const quoteLine = {
+    color: "#333333",
+    fontSize: "10px",
+    margin: "0",
 };
 
 const quote = {
@@ -309,38 +437,118 @@ const quote = {
     fontSize: "14px",
     lineHeight: "1.8",
     fontStyle: "italic",
+    margin: "0 0 8px 0",
+};
+
+const quoteHighlight = {
+    color: "#EA0000",
+    fontSize: "20px",
+    fontWeight: "bold",
+    letterSpacing: "0.1em",
     margin: "0",
+};
+
+const signatureContainer = {
+    marginTop: "20px",
+    textAlign: "center" as const,
 };
 
 const closing = {
     color: "#FFFFFF",
-    fontSize: "14px",
+    fontSize: "16px",
     fontWeight: "900",
-    letterSpacing: "0.25em",
-    margin: "0 0 5px 0",
+    letterSpacing: "0.3em",
+    margin: "0 0 4px 0",
     textTransform: "uppercase" as const,
 };
 
 const signature = {
     color: "#EA0000",
-    fontSize: "12px",
+    fontSize: "14px",
     fontWeight: "bold",
     letterSpacing: "0.15em",
-    lineHeight: "1.7",
     margin: "0",
 };
 
 const muted = {
     color: "#666666",
-    fontSize: "10px",
+    fontSize: "11px",
     letterSpacing: "0.08em",
+    margin: "4px 0 0 0",
+};
+
+const vpContainer = {
+    marginTop: "40px",
+    paddingTop: "30px",
+    borderTop: "2px solid #1A1A1A",
+};
+
+const vpHeader = {
+    color: "#666666",
+    fontSize: "9px",
+    fontWeight: "bold",
+    letterSpacing: "0.25em",
+    margin: "0 0 20px 0",
+    textAlign: "center" as const,
+    textTransform: "uppercase" as const,
+};
+
+const vpGrid = {
+    display: "flex" as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    flexDirection: "column" as const,
+    maxWidth: "400px",
+    margin: "0 auto",
+};
+
+const vpCard = {
+    textAlign: "center" as const,
+    padding: "12px 0",
+    width: "100%",
+};
+
+const vpName = {
+    color: "#FFFFFF",
+    fontSize: "14px",
+    fontWeight: "bold",
+    letterSpacing: "0.05em",
+    margin: "0 0 2px 0",
+};
+
+const vpPosition = {
+    color: "#EA0000",
+    fontSize: "11px",
+    fontWeight: "bold",
+    letterSpacing: "0.08em",
+    margin: "0 0 4px 0",
+};
+
+const vpPhone = {
+    color: "#999999",
+    fontSize: "12px",
+    letterSpacing: "0.05em",
+    margin: "0",
+};
+
+const vpEmail = {
+    color: "#666666",
+    fontSize: "11px",
+    letterSpacing: "0.05em",
+    margin: "0",
+};
+
+const vpDivider = {
+    borderColor: "#1A1A1A",
+    margin: "10px 0",
+    width: "60%",
 };
 
 const classifiedBottom = {
     color: "#333333",
-    fontSize: "8px",
+    fontSize: "7px",
     letterSpacing: "0.3em",
     textAlign: "center" as const,
-    margin: "45px 0 0 0",
+    margin: "35px 0 0 0",
     textTransform: "uppercase" as const,
 };
