@@ -1,0 +1,32 @@
+name: Keep Database Awake
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Runs every day at 12:00 PM UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  ping-db:
+    name: Ping Yugabyte Database
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Ping Database
+        env:
+          # Pulls the database URL from GitHub Secrets (the same one used for backups)
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Error: DATABASE_URL secret is not set!"
+            exit 1
+          fi
+          
+          echo "Sending a ping request to the database..."
+          # Running a simple query to register activity and prevent the database from sleeping
+          psql $DATABASE_URL -c "SELECT 1 as is_awake;"
+          echo "Database pinged successfully! Sleeping issue avoided."
