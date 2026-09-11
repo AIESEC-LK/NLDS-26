@@ -20,7 +20,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "ABOUT", href: "/", scrollTo: "mission" },
   { label: "CONFERENCE TEAM", href: "/team" },
   { label: "PARTNERS", href: "/partners" },
-  // TEMPORARILY DISABLED: { label: "STORE", href: "/store", locked: true },
+  { label: "STORE", href: "/store" },
   { label: "ROOM ALLOCATION", href: "/delegates", locked: true },
 ];
 

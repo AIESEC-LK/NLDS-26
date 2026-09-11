@@ -377,7 +377,7 @@ export default function CheckoutForm() {
                   <input
                     id="fullName"
                     className="reg-field"
-                    placeholder="John Doe"
+                    placeholder="Full Name"
                     aria-invalid={!!errors.fullName}
                     {...register("fullName")}
                   />

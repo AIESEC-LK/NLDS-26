@@ -1,7 +1,12 @@
+import * as React from "react";
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import { randomUUID } from "crypto";
 import { MerchDriveClient } from "@/lib/backend/merch/merch-drive";
 import { MerchSheetsClient } from "@/lib/backend/merch/merch-sheets";
+import { MerchOrderConfirmationEmail } from "@/lib/backend/email/templates/merch-order-confirmation";
+import { render } from "@react-email/render";
+import { env } from "@/lib/config/env";
+import { prisma } from "@/lib/backend/db/prisma";
 
 export const maxDuration = 60;
 
@@ -127,9 +132,7 @@ export async function POST(request: Request) {
 
     // 4. Append Order Row to Google Sheets
     const sheetsClient = new MerchSheetsClient();
-    console.log(
-      `[Store Order API] Appending order ${orderId} to Google Sheet...`,
-    );
+    console.log(`[Store Order API] Appending order ${orderId} to Google Sheet...`);
     await sheetsClient.appendOrder({
       orderId,
       fullName,
@@ -143,7 +146,73 @@ export async function POST(request: Request) {
       receiptDriveUrl,
     });
 
+    // 4b. Persist order to database
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore – prisma.merchOrder exists at runtime; tsc resolves stale @prisma/client stub
+    await prisma.merchOrder.create({
+      data: {
+        id: randomUUID(),
+        orderId,
+        fullName,
+        email,
+        mobileNumber,
+        entity,
+        itemsSummary,
+        totalUnits,
+        totalAmount,
+        paymentStatus: "PENDING_VERIFICATION",
+        receiptDriveUrl,
+        receiptFileName: driveFileName,
+        items: items as any,
+        updatedAt: new Date(),
+      },
+    });
+    console.log(`[Store Order API] Order ${orderId} persisted to database.`);
+
     console.log(`[Store Order API] Order ${orderId} successfully processed.`);
+
+    // 5. Send confirmation email to customer (using merch-specific SMTP)
+    try {
+      const merchSmtpUser =
+        env.EMAIL_MERCH_USER || process.env.EMAIL_MERCH_USER;
+      const merchSmtpPass =
+        env.EMAIL_MERCH_PASS || process.env.EMAIL_MERCH_PASS;
+
+      const nodemailer = await import("nodemailer");
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: { user: merchSmtpUser, pass: merchSmtpPass },
+      });
+
+      const emailHtml = await render(
+        React.createElement(MerchOrderConfirmationEmail, {
+          orderId,
+          recipientName: fullName,
+          items: items.map((i) => ({
+            name: i.name,
+            itemCode: i.itemCode,
+            size: i.size,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+          })),
+          totalAmount,
+          entity,
+        }),
+      );
+
+      await transporter.sendMail({
+        from: `"NLDS'26 Store" <${merchSmtpUser}>`,
+        to: email,
+        subject: `[NLDS'26] Order Received — ${orderId}`,
+        html: emailHtml,
+      });
+      console.log(`[Store Order API] Confirmation email sent to ${email} via merch SMTP.`);
+    } catch (emailError: any) {
+      // Non-fatal: log but don't fail the order
+      console.error(
+        `[Store Order API] Failed to send confirmation email: ${emailError.message}`,
+      );
+    }
 
     return NextResponse.json({
       success: true,
