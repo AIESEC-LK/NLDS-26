@@ -24,8 +24,10 @@ const envSchema = z.object({
 
   GOOGLE_CLIENT_EMAIL: z.string().email().optional().or(z.literal("")),
   GOOGLE_PRIVATE_KEY: z.string().optional(),
-  GOOGLE_SHEETS_SPREADSHEET_ID: z.string().optional(),
-  GOOGLE_SHEETS_MERCH_SPREADSHEET_ID: z.string().optional(),
+  
+  // Admin Sync Webhook (Replaces direct Google Sheets integration)
+  ADMIN_SYNC_URL: z.string().url().optional(),
+  CRON_SECRET: z.string().optional(),
 
   // Drive Integ
   GOOGLE_DRIVE_CV_FOLDER_ID: z.string().optional(),
