@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
+    "@marsidev/react-turnstile": "^1.6.1",
     "@prisma/client": "^5.22.0",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.1.0",

@@ -5,6 +5,7 @@ import { RegistrationService } from "@/lib/backend/services/registration.service
 import { RegistrationRepository } from "@/lib/backend/repositories/registration.repository";
 import { ServerRegistrationSchema } from "@/lib/backend/validation/registration.schema";
 import { syncService } from "@/lib/backend/events/sync.service";
+import { verifyTurnstileToken } from "@/lib/captcha";
 
 export const maxDuration = 60;
 
@@ -14,6 +15,22 @@ const service = new RegistrationService(repo);
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
+    const turnstileToken = body.turnstileToken;
+    if (!turnstileToken) {
+      return NextResponse.json(
+        { error: "Security check failed. Captcha token missing." },
+        { status: 400 },
+      );
+    }
+
+    const isHuman = await verifyTurnstileToken(turnstileToken);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Security check failed. Please refresh and try again." },
+        { status: 403 },
+      );
+    }
 
     const participantId = body.nationalIdOrPassport; // we'll use this temporarily to check if existing
     if (!participantId) {

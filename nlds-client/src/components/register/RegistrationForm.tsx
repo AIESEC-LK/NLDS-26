@@ -5,6 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 import StepIndicator from "@/components/register/StepIndicator";
 import StepHeader from "@/components/register/StepHeader";
@@ -101,6 +102,7 @@ export default function RegistrationForm() {
     null,
   );
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const formTopRef = useRef<HTMLElement>(null);
 
   const methods = useForm<RegistrationFormData>({
@@ -269,6 +271,17 @@ export default function RegistrationForm() {
 
   const onSubmit = async (data: RegistrationFormData) => {
     if (isSubmitting) return;
+    
+    if (!turnstileToken) {
+      setSubmitError("Please complete the Security Check (Captcha) before submitting.");
+      setIsSuccess(true);
+      // Scroll to top so error screen appears at the top on mobile
+      if (document.activeElement instanceof HTMLElement)
+        document.activeElement.blur();
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError(null);
     setSubmitReferenceCode(null);
@@ -312,6 +325,7 @@ export default function RegistrationForm() {
               },
             ]
           : [],
+        turnstileToken,
       };
 
       const res = await fetch("/api/register/submit", {
@@ -493,6 +507,16 @@ export default function RegistrationForm() {
                     onPrev={handlePrev}
                     onNext={handleNext}
                   />
+
+                  {currentStep === 5 && (
+                    <div className="mt-8 flex justify-center">
+                      <Turnstile
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        options={{ theme: "dark" }}
+                      />
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-center gap-3 mt-8">
                     <div
