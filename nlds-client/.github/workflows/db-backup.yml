@@ -1,0 +1,45 @@
+name: Nightly Database Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs at 00:00 UTC every day
+  workflow_dispatch: # Allows you to trigger this manually from the Actions tab
+
+jobs:
+  backup:
+    name: Backup Database
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Generate Timestamp
+        id: time
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Dump Database
+        env:
+          # This pulls your database URL from GitHub Secrets
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Error: DATABASE_URL secret is not set!"
+            exit 1
+          fi
+          
+          echo "Starting database dump..."
+          # Dump the database to a file and compress it
+          pg_dump $DATABASE_URL --no-owner --no-privileges -F p -f "nlds_backup_${{ env.date }}.sql"
+          gzip "nlds_backup_${{ env.date }}.sql"
+          echo "Dump completed successfully."
+
+      - name: Upload Backup to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: nlds-db-backup-${{ env.date }}
+          path: nlds_backup_${{ env.date }}.sql.gz
+          # Automatically delete backups after 30 days to save space
+          retention-days: 30
