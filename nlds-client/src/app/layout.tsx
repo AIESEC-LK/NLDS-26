@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LenisProvider from "@/components/providers/LenisProvider";
 import { CartProvider } from "@/lib/store/cartStore";
+import { SITE_URL } from "@/lib/constants";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -28,9 +29,24 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "NLDS'26 | AIESEC in Sri Lanka",
   description:
     "National Leadership Development Seminar 2026. Your next mission begins here. 09–11 October 2026, Sri Lanka.",
+  keywords: [
+    "NLDS",
+    "NLDS 2026",
+    "NLDS 26",
+    "AIESEC",
+    "AIESEC in Sri Lanka",
+    "AIESEC Sri Lanka",
+    "Leadership Development Seminar",
+    "National Leadership Development Seminar",
+    "Sri Lanka Youth",
+    "Youth Leadership",
+    "Mission Impossible",
+  ],
+  authors: [{ name: "AIESEC in Sri Lanka", url: "https://aiesec.lk" }],
   openGraph: {
     title: "NLDS'26 — Mission Impossible",
     description:
