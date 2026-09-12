@@ -34,8 +34,8 @@ export const PRODUCTS: Product[] = [
       "Complete operative kit — T-Shirt, wrist band, bucket hat & stickers.",
     price: 5500,
     fitPrices: { Oversized: 2200, Regular: 1900 },
-    images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217458/12_huvvwt.png",
-      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217460/13_mgxqya.png"
+    images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789236358/12_fpvwli.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789236360/13_a2jzmb.png"
     ],
     sizes: ["S", "M", "L", "XL"],
     fitTypes: ["Oversized", "Regular"],
@@ -56,7 +56,7 @@ export const PRODUCTS: Product[] = [
     shortDescription:
       "Official mission apparel. Premium cotton. Limited edition.",
     price: 3500,
-    fitPrices: { Oversized: 2200, Regular: 1900 },
+    fitPrices: { Oversized: 2100, Regular: 1800 },
     images: [
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217445/2_gycikk.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217445/8_tracy0.png",
@@ -96,7 +96,7 @@ export const PRODUCTS: Product[] = [
     description:
       "NLDS'26 Mission Impossible themed designs. Perfect for laptops, notebooks, and equipment.",
     shortDescription: "Mission themed.",
-    price: 450,
+    price: 150,
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217449/6_m1a7xc.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217451/5_hokdcw.png"
     ],
@@ -113,7 +113,7 @@ export const PRODUCTS: Product[] = [
       "Official AIESEC bucket hat. premium quality. AIESEC Man embroidered logo. One size fits most.",
     shortDescription:
       "Official operative headgear. Embroidered logo. One size fits most.",
-    price: 2500,
+    price: 500,
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217439/7_px5vlk.png"],
     sizes: [], // one size fits most
     available: false,
