@@ -73,7 +73,7 @@ export class MerchDriveClient {
     };
 
     try {
-      const response = await withRetry(() =>
+      const response = await withRetry<any>(() =>
         this.drive.files.create({
           requestBody: fileMetadata,
           media: media,
