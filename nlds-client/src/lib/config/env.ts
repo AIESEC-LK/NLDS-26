@@ -42,6 +42,8 @@ const envSchema = z.object({
   // Merch-specific SMTP (separate sender account)
   EMAIL_MERCH_USER: z.string().optional(),
   EMAIL_MERCH_PASS: z.string().optional(),
+  
+  GOOGLE_SHEETS_MERCH_SPREADSHEET_ID: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);
