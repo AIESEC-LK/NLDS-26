@@ -120,17 +120,15 @@ export default function SizeSelector({
                 SIZE CHART
               </span>
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex gap-2 mt-1">
               <button
                 onClick={() => setChartOpen("oversized")}
-                className="flex items-center gap-1 px-2.5 py-1.5 transition-all duration-200 hover:border-[var(--red)] hover:text-white"
+                className="flex-1 flex items-center justify-center gap-1 px-4 py-3 transition-all duration-200 bg-white/5 text-white/50 border border-white/10 hover:bg-[var(--red)] hover:border-[var(--red)] hover:text-white"
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "8.5px",
+                  fontSize: "10px",
                   letterSpacing: "0.14em",
-                  color: "rgba(255,255,255,0.55)",
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  fontWeight: 600,
                   cursor: "pointer",
                 }}
                 aria-label="View oversized size chart"
@@ -140,14 +138,12 @@ export default function SizeSelector({
               </button>
               <button
                 onClick={() => setChartOpen("regular")}
-                className="flex items-center gap-1 px-2.5 py-1.5 transition-all duration-200 hover:border-[var(--red)] hover:text-white"
+                className="flex-1 flex items-center justify-center gap-1 px-4 py-3 transition-all duration-200 bg-white/5 text-white/50 border border-white/10 hover:bg-[var(--red)] hover:border-[var(--red)] hover:text-white"
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "8.5px",
+                  fontSize: "10px",
                   letterSpacing: "0.14em",
-                  color: "rgba(255,255,255,0.55)",
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  fontWeight: 600,
                   cursor: "pointer",
                 }}
                 aria-label="View regular size chart"
@@ -249,23 +245,16 @@ export default function SizeSelector({
                     <div className="flex gap-1">
                       <button
                         onClick={() => setChartOpen("oversized")}
-                        className="px-2 py-1 transition-all"
+                        className={`px-3 py-1.5 transition-all duration-200 border ${
+                          chartOpen === "oversized"
+                            ? "bg-[var(--red)] border-[var(--red)] text-white"
+                            : "bg-transparent border-white/10 text-white/40 hover:border-[var(--red)] hover:text-white"
+                        }`}
                         style={{
                           fontFamily: "var(--font-mono)",
-                          fontSize: "7.5px",
+                          fontSize: "9px",
                           letterSpacing: "0.14em",
-                          color:
-                            chartOpen === "oversized"
-                              ? "#fff"
-                              : "rgba(255,255,255,0.4)",
-                          background:
-                            chartOpen === "oversized"
-                              ? "rgba(196,30,58,0.15)"
-                              : "transparent",
-                          border:
-                            chartOpen === "oversized"
-                              ? "1px solid var(--red)"
-                              : "1px solid rgba(255,255,255,0.08)",
+                          fontWeight: 600,
                           cursor: "pointer",
                         }}
                       >
@@ -273,23 +262,16 @@ export default function SizeSelector({
                       </button>
                       <button
                         onClick={() => setChartOpen("regular")}
-                        className="px-2 py-1 transition-all"
+                        className={`px-3 py-1.5 transition-all duration-200 border ${
+                          chartOpen === "regular"
+                            ? "bg-[var(--red)] border-[var(--red)] text-white"
+                            : "bg-transparent border-white/10 text-white/40 hover:border-[var(--red)] hover:text-white"
+                        }`}
                         style={{
                           fontFamily: "var(--font-mono)",
-                          fontSize: "7.5px",
+                          fontSize: "9px",
                           letterSpacing: "0.14em",
-                          color:
-                            chartOpen === "regular"
-                              ? "#fff"
-                              : "rgba(255,255,255,0.4)",
-                          background:
-                            chartOpen === "regular"
-                              ? "rgba(196,30,58,0.15)"
-                              : "transparent",
-                          border:
-                            chartOpen === "regular"
-                              ? "1px solid var(--red)"
-                              : "1px solid rgba(255,255,255,0.08)",
+                          fontWeight: 600,
                           cursor: "pointer",
                         }}
                       >

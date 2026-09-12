@@ -29,6 +29,10 @@ export async function submitOrder(payload: OrderPayload): Promise<OrderResult> {
     formData.append("receipt", payload.receiptFile, payload.receiptFile.name);
   }
 
+  if (payload.turnstileToken) {
+    formData.append("turnstileToken", payload.turnstileToken);
+  }
+
   try {
     const res = await fetch("/api/store/order", {
       method: "POST",

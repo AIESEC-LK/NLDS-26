@@ -59,6 +59,7 @@ export interface OrderPayload {
   total: number;
   receiptFile: File; // for real backend: will be FormData
   paymentStatus: PaymentStatus;
+  turnstileToken?: string;
 }
 
 export interface OrderResult {

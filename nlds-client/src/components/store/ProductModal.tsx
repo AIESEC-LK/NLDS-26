@@ -234,6 +234,13 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <ProductGallery
                     images={product.images}
                     productName={product.name}
+                    forcedIndex={
+                      requiresFit && selectedFit
+                        ? selectedFit.toLowerCase() === "oversized"
+                          ? 0
+                          : 1
+                        : undefined
+                    }
                   />
                 </div>
 
@@ -319,14 +326,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     </div>
 
                     {/* Product name & subtitle */}
-                    <div style={{ marginBottom: "0.3rem" }}>
+                    <div style={{ marginBottom: "0.5rem" }}>
                       <h2
                         className="font-display"
                         style={{
-                          fontSize: "clamp(1.15rem, 3vw, 1.7rem)",
-                          letterSpacing: "0.04em",
-                          lineHeight: 1.05,
+                          fontSize: "clamp(1.8rem, 4.5vw, 2.5rem)",
+                          letterSpacing: "0.02em",
+                          lineHeight: 1,
                           color: "var(--text)",
+                          textTransform: "uppercase",
                         }}
                       >
                         {product.name}
@@ -334,10 +342,11 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                       <p
                         className="font-classified"
                         style={{
-                          fontSize: "7.5px",
-                          letterSpacing: "0.16em",
-                          color: "var(--text-muted)",
-                          marginTop: "0.15rem",
+                          fontSize: "8.5px",
+                          letterSpacing: "0.2em",
+                          color: "var(--red)",
+                          opacity: 0.8,
+                          marginTop: "0.25rem",
                         }}
                       >
                         OFFICIAL ISSUE
@@ -345,7 +354,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     </div>
 
                     {/* Description */}
-                    <p className="line-clamp-2 sm:line-clamp-none text-[11px] sm:text-[12px] text-white/65 font-light leading-relaxed mb-1.5">
+                    <p className="font-sans text-[13px] sm:text-[14px] text-white/60 font-normal leading-[1.7] mb-4 pr-2">
                       {product.description}
                     </p>
 

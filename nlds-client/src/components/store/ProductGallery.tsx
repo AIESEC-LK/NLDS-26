@@ -1,20 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductGalleryProps {
   images: string[];
   productName: string;
+  forcedIndex?: number;
 }
 
 export default function ProductGallery({
   images,
   productName,
+  forcedIndex,
 }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    if (
+      forcedIndex !== undefined &&
+      forcedIndex >= 0 &&
+      forcedIndex < images.length &&
+      forcedIndex !== activeIndex
+    ) {
+      setDirection(forcedIndex > activeIndex ? 1 : -1);
+      setActiveIndex(forcedIndex);
+    }
+  }, [forcedIndex, images.length]); // Intentionally omitting activeIndex so it only triggers on forcedIndex change
 
   const validImages = images.filter(Boolean);
   const hasMultiple = validImages.length > 1;

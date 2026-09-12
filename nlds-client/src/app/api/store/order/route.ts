@@ -7,6 +7,7 @@ import { MerchOrderConfirmationEmail } from "@/lib/backend/email/templates/merch
 import { render } from "@react-email/render";
 import { env } from "@/lib/config/env";
 import { prisma } from "@/lib/backend/db/prisma";
+import { verifyTurnstileToken } from "@/lib/captcha";
 
 export const maxDuration = 60;
 
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
     const itemsRaw = formData.get("items") as string;
     const totalRaw = formData.get("total") as string;
     const receiptFile = formData.get("receipt") as File | null;
+    const turnstileToken = formData.get("turnstileToken") as string;
 
     // 1. Basic validation
     if (!fullName || fullName.length < 2) {
@@ -77,6 +79,21 @@ export async function POST(request: Request) {
     if (!receiptFile || receiptFile.size === 0) {
       return NextResponse.json(
         { error: "Payment receipt file is required." },
+        { status: 400 },
+      );
+    }
+
+    if (!turnstileToken) {
+      return NextResponse.json(
+        { error: "Security check failed. Missing CAPTCHA token." },
+        { status: 400 },
+      );
+    }
+
+    const isHuman = await verifyTurnstileToken(turnstileToken);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Security check failed. Invalid CAPTCHA." },
         { status: 400 },
       );
     }
