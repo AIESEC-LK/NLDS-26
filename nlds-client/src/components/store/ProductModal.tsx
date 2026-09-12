@@ -146,7 +146,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             <div
               data-lenis-prevent
               data-lenis-prevent-touch
-              className="relative w-[92vw] max-w-[400px] sm:max-w-[460px] md:max-w-[760px] max-h-[86vh] sm:max-h-[85vh] overflow-y-auto pointer-events-auto flex flex-col"
+              className="relative w-[92vw] max-w-[400px] sm:max-w-[460px] md:max-w-[880px] max-h-[95vh] sm:max-h-[90vh] overflow-hidden pointer-events-auto flex flex-col"
               style={{
                 background: "#0a0a0c",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -246,7 +246,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
                 {/* Right — Details with ultra compact mobile padding & spacing */}
                 <div
-                  className="p-3 sm:p-4 md:p-5 flex flex-col justify-between flex-1"
+                  className="p-3 sm:p-4 md:p-5 flex flex-col justify-between flex-1 overflow-y-auto"
                   style={{
                     textAlign: "left",
                     alignItems: "flex-start",
