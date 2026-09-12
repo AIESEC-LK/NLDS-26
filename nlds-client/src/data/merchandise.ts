@@ -29,7 +29,7 @@ export const PRODUCTS: Product[] = [
     name: "NLDS'26 COMBO PACK",
     category: "combo",
     description:
-      "The complete operative kit. Everything you need to gear up for the mission. Includes the official NLDS'26 T-Shirt, wrist band, bucket hat, and sticker pack. Best value for the full NLDS'26 experience.",
+      "The complete operative kit. Everything you need to gear up for the mission. Includes the official NLDS'26 T-Shirt, wrist band, and sticker pack. Best value for the full NLDS'26 experience.",
     shortDescription:
       "Complete operative kit — T-Shirt, wrist band, bucket hat & stickers.",
     price: 5500,
