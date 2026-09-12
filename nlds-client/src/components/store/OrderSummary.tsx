@@ -12,6 +12,7 @@ interface DisplayItem {
   name: string;
   itemCode: string;
   size: string | null;
+  fit: string | null;
   quantity: number;
   unitPrice: number;
   total: number;
@@ -28,6 +29,7 @@ export default function OrderSummary({ buyNow }: OrderSummaryProps) {
       name: buyNow.product.name,
       itemCode: buyNow.product.itemCode,
       size: buyNow.size,
+      fit: buyNow.fit,
       quantity: buyNow.quantity,
       unitPrice: buyNow.product.price,
       total: buyNow.product.price * buyNow.quantity,
@@ -39,6 +41,7 @@ export default function OrderSummary({ buyNow }: OrderSummaryProps) {
       name: i.name,
       itemCode: i.itemCode,
       size: i.size,
+      fit: i.fit,
       quantity: i.quantity,
       unitPrice: i.price,
       total: i.price * i.quantity,
@@ -171,6 +174,32 @@ export default function OrderSummary({ buyNow }: OrderSummaryProps) {
                         }}
                       >
                         SIZE: {item.size}
+                      </span>
+                    </>
+                  )}
+                  {item.fit && (
+                    <>
+                      <span
+                        style={{
+                          color: "rgba(255,255,255,0.2)",
+                          fontSize: "10px",
+                        }}
+                      >
+                        ·
+                      </span>
+                      <span
+                        className="font-classified"
+                        style={{
+                          fontSize: "9px",
+                          letterSpacing: "0.14em",
+                          color: "#fff",
+                          background: "rgba(255,255,255,0.06)",
+                          border: "1px solid rgba(255,255,255,0.18)",
+                          padding: "2px 7px",
+                          borderRadius: "2px",
+                        }}
+                      >
+                        {item.fit.toUpperCase()}
                       </span>
                     </>
                   )}

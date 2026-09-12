@@ -1,9 +1,30 @@
+import * as React from "react";
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import { randomUUID } from "crypto";
 import { MerchDriveClient } from "@/lib/backend/merch/merch-drive";
 import { MerchSheetsClient } from "@/lib/backend/merch/merch-sheets";
+import { MerchOrderConfirmationEmail } from "@/lib/backend/email/templates/merch-order-confirmation";
+import { render } from "@react-email/render";
+import { env } from "@/lib/config/env";
+import { prisma } from "@/lib/backend/db/prisma";
+import { verifyTurnstileToken } from "@/lib/captcha";
 
 export const maxDuration = 60;
+
+// Global cached nodemailer transporter to prevent SMTP initialization limits
+let cachedTransporter: any = null;
+async function getEmailTransporter() {
+  if (!cachedTransporter) {
+    const nodemailer = await import("nodemailer");
+    const merchSmtpUser = env.EMAIL_MERCH_USER || process.env.EMAIL_MERCH_USER;
+    const merchSmtpPass = env.EMAIL_MERCH_PASS || process.env.EMAIL_MERCH_PASS;
+    cachedTransporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: merchSmtpUser, pass: merchSmtpPass },
+    });
+  }
+  return cachedTransporter;
+}
 
 /** Generate a unique Order ID in the format NLDS26-(Entity)Randomnumber, e.g., NLDS26-CS84920 */
 function generateOrderId(entity: string): string {
@@ -22,6 +43,7 @@ interface IncomingOrderItem {
   name: string;
   itemCode?: string;
   size?: string | null;
+  fit?: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice?: number;
@@ -38,6 +60,7 @@ export async function POST(request: Request) {
     const itemsRaw = formData.get("items") as string;
     const totalRaw = formData.get("total") as string;
     const receiptFile = formData.get("receipt") as File | null;
+    const turnstileToken = formData.get("turnstileToken") as string;
 
     // 1. Basic validation
     if (!fullName || fullName.length < 2) {
@@ -75,6 +98,21 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!turnstileToken) {
+      return NextResponse.json(
+        { error: "Security check failed. Missing CAPTCHA token." },
+        { status: 400 },
+      );
+    }
+
+    const isHuman = await verifyTurnstileToken(turnstileToken);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Security check failed. Invalid CAPTCHA." },
+        { status: 400 },
+      );
+    }
+
     // 2. Parse Items
     let items: IncomingOrderItem[] = [];
     try {
@@ -98,8 +136,9 @@ export async function POST(request: Request) {
     const itemsSummary = items
       .map((item) => {
         const sizeStr = item.size ? ` [Size: ${item.size}]` : "";
+        const fitStr = item.fit ? ` [Fit: ${item.fit}]` : "";
         const itemCodeStr = item.itemCode ? ` (${item.itemCode})` : "";
-        return `${item.name}${itemCodeStr}${sizeStr} x${item.quantity} = LKR ${(item.unitPrice * item.quantity).toLocaleString()}`;
+        return `${item.name}${itemCodeStr}${sizeStr}${fitStr} x${item.quantity} = LKR ${(item.unitPrice * item.quantity).toLocaleString()}`;
       })
       .join(" | ");
 
@@ -125,12 +164,10 @@ export async function POST(request: Request) {
       receiptFile.type || "application/octet-stream",
     );
 
-    // 4. Append Order Row to Google Sheets
+    // 4. Run Sheets, DB, and Email concurrently
     const sheetsClient = new MerchSheetsClient();
-    console.log(
-      `[Store Order API] Appending order ${orderId} to Google Sheet...`,
-    );
-    await sheetsClient.appendOrder({
+    
+    const sheetsPromise = sheetsClient.appendOrder({
       orderId,
       fullName,
       email,
@@ -141,6 +178,67 @@ export async function POST(request: Request) {
       totalAmount,
       paymentStatus: "PENDING_VERIFICATION",
       receiptDriveUrl,
+    }).then(() => console.log(`[Store Order API] Order ${orderId} appended to Google Sheet.`));
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore – prisma.merchOrder exists at runtime
+    const dbPromise = prisma.merchOrder.create({
+      data: {
+        id: randomUUID(),
+        orderId,
+        fullName,
+        email,
+        mobileNumber,
+        entity,
+        itemsSummary,
+        totalUnits,
+        totalAmount,
+        paymentStatus: "PENDING_VERIFICATION",
+        receiptDriveUrl,
+        receiptFileName: driveFileName,
+        items: items as any,
+        updatedAt: new Date(),
+      },
+    }).then(() => console.log(`[Store Order API] Order ${orderId} persisted to database.`));
+
+    const emailPromise = (async () => {
+      const transporter = await getEmailTransporter();
+      const merchSmtpUser = env.EMAIL_MERCH_USER || process.env.EMAIL_MERCH_USER;
+      
+      const emailHtml = await render(
+        React.createElement(MerchOrderConfirmationEmail, {
+          orderId,
+          recipientName: fullName,
+          items: items.map((i) => ({
+            name: i.name,
+            itemCode: i.itemCode,
+            size: i.size,
+            fit: i.fit,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+          })),
+          totalAmount,
+          entity,
+        }),
+      );
+
+      await transporter.sendMail({
+        from: `"NLDS'26 Store" <${merchSmtpUser}>`,
+        to: email,
+        subject: `[NLDS'26] Order Received — ${orderId}`,
+        html: emailHtml,
+      });
+      console.log(`[Store Order API] Confirmation email sent to ${email} via merch SMTP.`);
+    })();
+
+    // Await all background tasks concurrently
+    const results = await Promise.allSettled([sheetsPromise, dbPromise, emailPromise]);
+
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        const taskName = index === 0 ? "Sheets Append" : index === 1 ? "DB Persist" : "Email Send";
+        console.error(`[Store Order API] ${taskName} failed for order ${orderId}:`, result.reason);
+      }
     });
 
     console.log(`[Store Order API] Order ${orderId} successfully processed.`);

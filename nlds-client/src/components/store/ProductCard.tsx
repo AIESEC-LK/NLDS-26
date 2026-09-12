@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import type { Product } from "@/data/merchandise";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
@@ -17,6 +17,18 @@ export default function ProductCard({
   onClick,
 }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
+
+  // Auto-play carousel
+  useEffect(() => {
+    if (product.images.length <= 1 || hovered) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIdx((prev) => (prev + 1) % product.images.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [product.images.length, hovered]);
 
   return (
     <motion.article
@@ -106,8 +118,18 @@ export default function ProductCard({
               className="absolute top-3.5 right-3.5 z-10"
               style={{
                 padding: "4px 10px",
-                background: "var(--red)",
-                boxShadow: "0 0 12px rgba(196,30,58,0.4)",
+                background:
+                  product.badge === "COMING SOON"
+                    ? "rgba(10, 10, 12, 0.88)"
+                    : "var(--red)",
+                border:
+                  product.badge === "COMING SOON"
+                    ? "1px solid rgba(255, 255, 255, 0.22)"
+                    : "none",
+                boxShadow:
+                  product.badge === "COMING SOON"
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 0 12px rgba(196,30,58,0.4)",
               }}
             >
               <span
@@ -115,7 +137,10 @@ export default function ProductCard({
                 style={{
                   fontSize: "8.5px",
                   letterSpacing: "0.18em",
-                  color: "#fff",
+                  color:
+                    product.badge === "COMING SOON"
+                      ? "rgba(255,255,255,0.85)"
+                      : "#fff",
                 }}
               >
                 {product.badge}
@@ -124,18 +149,81 @@ export default function ProductCard({
           )}
 
           {/* Product image */}
-          {product.images[0] ? (
-            <motion.img
-              src={product.images[0]}
-              alt={product.name}
-              animate={{ scale: hovered ? 1.06 : 1 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full h-full object-cover"
-              style={{ display: "block" }}
-            />
+          {product.images.length > 0 ? (
+            <div className="w-full h-full relative group/image">
+              {product.images.map((imgSrc, idx) => (
+                <motion.img
+                  key={idx}
+                  src={imgSrc}
+                  alt={`${product.name} ${idx + 1}`}
+                  initial={false}
+                  animate={{ 
+                    opacity: currentImageIdx === idx ? 1 : 0,
+                    scale: hovered ? 1.06 : 1 
+                  }}
+                  transition={{ 
+                    opacity: { duration: 0.9, ease: "easeInOut" },
+                    scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } 
+                  }}
+                  className="w-full h-full object-cover absolute inset-0"
+                  style={{ 
+                    pointerEvents: currentImageIdx === idx ? "auto" : "none",
+                    zIndex: currentImageIdx === idx ? 1 : 0
+                  }}
+                />
+              ))}
+
+              {/* Navigation Controls (Only show if multiple images) */}
+              {product.images.length > 1 && (
+                <>
+                  {/* Left Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIdx((prev) => 
+                        prev === 0 ? product.images.length - 1 : prev - 1
+                      );
+                    }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 text-white/80 hover:text-white hover:bg-black/90 opacity-0 group-hover/image:opacity-100 transition-opacity z-20 border border-white/10"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+
+                  {/* Right Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIdx((prev) => 
+                        (prev + 1) % product.images.length
+                      );
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 text-white/80 hover:text-white hover:bg-black/90 opacity-0 group-hover/image:opacity-100 transition-opacity z-20 border border-white/10"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+
+                  {/* Dot Indicators */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                    {product.images.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentImageIdx(i);
+                        }}
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                          i === currentImageIdx ? "bg-white" : "bg-white/40 hover:bg-white/60"
+                        }`}
+                        aria-label={`Go to image ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           ) : (
             /* Placeholder */
-            <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-4 absolute inset-0">
               <div
                 style={{
                   width: 64,
@@ -223,10 +311,10 @@ export default function ProductCard({
                   letterSpacing: "0.22em",
                   color: product.available
                     ? "var(--red)"
-                    : "rgba(255,255,255,0.25)",
+                    : "rgba(255,255,255,0.45)",
                 }}
               >
-                {product.available ? "● AVAILABLE" : "● SOLD OUT"}
+                {product.available ? "● AVAILABLE" : "○ COMING SOON"}
               </span>
             </div>
 
@@ -273,24 +361,44 @@ export default function ProductCard({
                   color: "var(--text)",
                 }}
               >
-                LKR {product.price.toLocaleString()}
+                {product.fitPrices ? (
+                  <>
+                    <span
+                      style={{
+                        fontSize: "0.65rem",
+                        letterSpacing: "0.14em",
+                        color: "rgba(255,255,255,0.4)",
+                        marginRight: "4px",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      FROM
+                    </span>
+                    LKR {Math.min(...Object.values(product.fitPrices)).toLocaleString()}
+                  </>
+                ) : (
+                  `LKR ${product.price.toLocaleString()}`
+                )}
               </div>
             </div>
 
             {/* CTA button */}
             <div
-              className="flex items-center justify-between px-4 py-2.5 mt-1 transition-colors group-hover:bg-[var(--red)] group-hover:border-[var(--red)]"
+              className={`flex items-center justify-center gap-2 px-4 py-[15px] mt-1 transition-all ${
+                product.available
+                  ? "bg-[var(--red)] text-white hover:bg-[var(--red-hover,rgb(220,38,38))]"
+                  : "bg-white/5 text-white/50 border border-white/10 group-hover:border-[var(--red)] group-hover:text-white/80"
+              }`}
               style={{
-                background: "rgba(255,255,255,0.025)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                border: product.available ? "none" : undefined,
               }}
             >
-              <span className="font-classified text-[10px] tracking-[0.22em] text-white/80 group-hover:text-white transition-colors">
-                VIEW ITEM SPECIFICATIONS
+              <span className="font-classified font-semibold text-[11px] tracking-[0.2em]">
+                {product.available ? "VIEW ITEM SPECIFICATIONS" : "COMING SOON — PREVIEW"}
               </span>
               <ArrowRight
-                size={13}
-                className="text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all"
+                size={14}
+                className={`transition-transform ${product.available ? "group-hover:translate-x-1" : ""}`}
               />
             </div>
           </div>

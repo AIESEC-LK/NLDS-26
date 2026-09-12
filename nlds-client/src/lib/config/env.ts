@@ -38,6 +38,10 @@ const envSchema = z.object({
 
   EMAIL_SMTP_USER: z.string().optional(),
   EMAIL_SMTP_PASS: z.string().optional(),
+
+  // Merch-specific SMTP (separate sender account)
+  EMAIL_MERCH_USER: z.string().optional(),
+  EMAIL_MERCH_PASS: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);

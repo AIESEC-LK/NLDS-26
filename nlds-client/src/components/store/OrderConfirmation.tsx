@@ -3,17 +3,20 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
+import type { OrderItem } from "@/lib/store/types";
 
 interface OrderConfirmationProps {
   orderId: string;
   customerName: string;
   total: number;
+  items?: OrderItem[];
 }
 
 export default function OrderConfirmation({
   orderId,
   customerName,
   total,
+  items = [],
 }: OrderConfirmationProps) {
   return (
     <div
@@ -200,6 +203,105 @@ export default function OrderConfirmation({
                 </span>
               </div>
             ))}
+
+            {/* Items Ordered Section */}
+            {items.length > 0 && (
+              <div
+                className="flex flex-col gap-0 mt-2 pt-4"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+              >
+                <span
+                  className="font-classified mb-3"
+                  style={{
+                    fontSize: "9px",
+                    letterSpacing: "0.24em",
+                    color: "var(--text-ghost)",
+                  }}
+                >
+                  ITEMS ORDERED
+                </span>
+                {items.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-start justify-between gap-3 py-2.5"
+                    style={{
+                      borderBottom:
+                        i < items.length - 1
+                          ? "1px solid rgba(255,255,255,0.04)"
+                          : "none",
+                    }}
+                  >
+                    <div className="flex flex-col gap-1 flex-1 min-w-0 text-left">
+                      <span
+                        className="font-display"
+                        style={{
+                          fontSize: "1.05rem",
+                          letterSpacing: "0.03em",
+                          color: "#fff",
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        {item.name}
+                      </span>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                        {item.size && (
+                          <span
+                            className="font-classified"
+                            style={{
+                              fontSize: "8px",
+                              letterSpacing: "0.12em",
+                              color: "#fff",
+                              background: "rgba(196,30,58,0.2)",
+                              border: "1px solid rgba(196,30,58,0.4)",
+                              padding: "1px 6px",
+                              borderRadius: "2px",
+                            }}
+                          >
+                            SIZE: {item.size}
+                          </span>
+                        )}
+                        {item.fit && (
+                          <span
+                            className="font-classified"
+                            style={{
+                              fontSize: "8px",
+                              letterSpacing: "0.12em",
+                              color: "#fff",
+                              background: "rgba(255,255,255,0.06)",
+                              border: "1px solid rgba(255,255,255,0.15)",
+                              padding: "1px 6px",
+                              borderRadius: "2px",
+                            }}
+                          >
+                            {item.fit.toUpperCase()}
+                          </span>
+                        )}
+                        <span
+                          className="font-classified"
+                          style={{
+                            fontSize: "8px",
+                            letterSpacing: "0.12em",
+                            color: "rgba(255,255,255,0.4)",
+                          }}
+                        >
+                          QTY: {String(item.quantity).padStart(2, "0")}
+                        </span>
+                      </div>
+                    </div>
+                    <span
+                      className="font-display flex-shrink-0"
+                      style={{
+                        fontSize: "1rem",
+                        letterSpacing: "0.03em",
+                        color: "#fff",
+                      }}
+                    >
+                      LKR {item.totalPrice.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <p
               className="font-classified text-center pt-2"

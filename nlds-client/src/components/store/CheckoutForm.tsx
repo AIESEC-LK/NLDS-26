@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, AlertCircle } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 import { useCart } from "@/lib/store/cartStore";
 import { submitOrder } from "@/lib/store/mockOrderService";
@@ -151,6 +152,7 @@ export default function CheckoutForm() {
   const [receiptError, setReceiptError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const isSubmittedRef = useRef(false);
 
   const {
@@ -213,6 +215,11 @@ export default function CheckoutForm() {
     setReceiptError("");
     setSubmitError("");
 
+    if (!turnstileToken) {
+      setSubmitError("Please complete the security check.");
+      return;
+    }
+
     // Build order items
     let orderItems: OrderItem[] = [];
     let total = 0;
@@ -223,6 +230,7 @@ export default function CheckoutForm() {
         name: buyNowSession.product.name,
         itemCode: buyNowSession.product.itemCode,
         size: buyNowSession.size,
+        fit: buyNowSession.fit,
         quantity: buyNowSession.quantity,
         unitPrice: buyNowSession.product.price,
         totalPrice: buyNowSession.product.price * buyNowSession.quantity,
@@ -234,7 +242,8 @@ export default function CheckoutForm() {
         productId: i.productId,
         name: i.name,
         itemCode: i.itemCode,
-        size: i.size,
+        size: i.size ?? null,
+        fit: i.fit ?? null,
         quantity: i.quantity,
         unitPrice: i.price,
         totalPrice: i.price * i.quantity,
@@ -261,6 +270,7 @@ export default function CheckoutForm() {
       total,
       receiptFile,
       paymentStatus: "PENDING_VERIFICATION",
+      turnstileToken: turnstileToken as string,
     };
 
     setIsSubmitting(true);
@@ -276,7 +286,7 @@ export default function CheckoutForm() {
         }
         // Navigate to confirmation
         router.push(
-          `/store/confirmation?orderId=${encodeURIComponent(result.orderId)}&name=${encodeURIComponent(data.fullName)}&total=${total}`,
+          `/store/confirmation?orderId=${encodeURIComponent(result.orderId)}&name=${encodeURIComponent(data.fullName)}&total=${total}&items=${encodeURIComponent(JSON.stringify(orderItems))}`,
         );
       } else {
         setSubmitError("Submission failed. Please try again.");
@@ -377,7 +387,7 @@ export default function CheckoutForm() {
                   <input
                     id="fullName"
                     className="reg-field"
-                    placeholder="John Doe"
+                    placeholder="Full Name"
                     aria-invalid={!!errors.fullName}
                     {...register("fullName")}
                   />
@@ -564,6 +574,14 @@ export default function CheckoutForm() {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            <div className="flex justify-center w-full mt-2 mb-2">
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                onSuccess={(token) => setTurnstileToken(token)}
+                options={{ theme: "dark" }}
+              />
+            </div>
 
             {/* Submit button (Full-Width Stretched) */}
             <div className="flex flex-col gap-3 w-full pt-2">

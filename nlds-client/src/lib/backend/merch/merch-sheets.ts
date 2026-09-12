@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import { env } from "@/lib/config/env";
+import { withRetry } from "@/lib/backend/utils/retry";
 
 export interface MerchOrderRowData {
   orderId: string;
@@ -269,12 +270,14 @@ export class MerchSheetsClient {
     ];
 
     try {
-      await this.sheets.spreadsheets.values.append({
-        spreadsheetId: this.spreadsheetId,
-        range: `${sheetName}!A:K`,
-        valueInputOption: "USER_ENTERED",
-        requestBody: { values: [rowValues] },
-      });
+      await withRetry(() =>
+        this.sheets.spreadsheets.values.append({
+          spreadsheetId: this.spreadsheetId,
+          range: `${sheetName}!A:K`,
+          valueInputOption: "USER_ENTERED",
+          requestBody: { values: [rowValues] },
+        }),
+      );
 
       console.log(
         `[MerchSheetsClient] Order ${order.orderId} appended successfully.`,

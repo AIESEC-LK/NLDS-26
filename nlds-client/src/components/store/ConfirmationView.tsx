@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import PageHero from "@/components/ui/PageHero";
 import OrderConfirmation from "@/components/store/OrderConfirmation";
+import type { OrderItem } from "@/lib/store/types";
 
 export default function ConfirmationView() {
   const searchParams = useSearchParams();
@@ -11,6 +12,14 @@ export default function ConfirmationView() {
   const customerName = searchParams.get("name") ?? "OPERATIVE";
   const totalStr = searchParams.get("total") ?? "0";
   const total = parseInt(totalStr, 10) || 0;
+
+  let items: OrderItem[] = [];
+  try {
+    const raw = searchParams.get("items");
+    if (raw) items = JSON.parse(decodeURIComponent(raw));
+  } catch {
+    // ignore parse errors
+  }
 
   return (
     <>
@@ -25,7 +34,9 @@ export default function ConfirmationView() {
         orderId={orderId}
         customerName={customerName}
         total={total}
+        items={items}
       />
     </>
   );
 }
+

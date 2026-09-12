@@ -10,6 +10,7 @@ import QuantitySelector from "@/components/store/QuantitySelector";
 import type { Product } from "@/data/merchandise";
 import { X, ShoppingBag, ArrowRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import FitSelector from "@/components/store/FitSelector";
 
 interface ProductModalProps {
   product: Product | null;
@@ -20,9 +21,11 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   const { addItem, setBuyNow, openCart } = useCart();
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedFit, setSelectedFit] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [toast, setToast] = useState<"added" | null>(null);
   const [sizeError, setSizeError] = useState(false);
+  const [fitError, setFitError] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -54,33 +57,58 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   // Reset state when product changes
   const handleClose = () => {
     setSelectedSize(null);
+    setSelectedFit(null);
     setQuantity(1);
     setToast(null);
     setSizeError(false);
+    setFitError(false);
     onClose();
   };
 
   const requiresSize = product ? product.sizes.length > 0 : false;
+  const requiresFit = product ? (product.fitTypes?.length ?? 0) > 0 : false;
+
+  // Compute the price to use based on selected fit (updates live as fit changes)
+  const effectivePrice: number = product
+    ? (selectedFit !== null && product.fitPrices?.[selectedFit] !== undefined
+      ? product.fitPrices[selectedFit]
+      : product.price)
+    : 0;
+
+  // For display when no fit is selected yet: show the lowest fit price as "from X"
+  const minFitPrice = product?.fitPrices
+    ? Math.min(...Object.values(product.fitPrices))
+    : null;
 
   function validateSize(): boolean {
+    let valid = true;
     if (requiresSize && !selectedSize) {
       setSizeError(true);
-      return false;
+      valid = false;
+    } else {
+      setSizeError(false);
     }
-    setSizeError(false);
-    return true;
+    if (requiresFit && !selectedFit) {
+      setFitError(true);
+      valid = false;
+    } else {
+      setFitError(false);
+    }
+    return valid;
   }
 
   function handleAddToCart() {
-    if (!product || !validateSize()) return;
-    addItem(product, selectedSize, quantity);
+    if (!product || !product.available || !validateSize()) return;
+    addItem(product, selectedSize, selectedFit, quantity, effectivePrice);
     setToast("added");
     setTimeout(() => setToast(null), 2500);
   }
 
   function handleBuyNow() {
-    if (!product || !validateSize()) return;
-    setBuyNow({ product, size: selectedSize, quantity });
+    if (!product || !product.available || !validateSize()) return;
+    // Override price in the product for BuyNow so checkout sees correct amount
+    const productWithPrice = { ...product, price: effectivePrice };
+    setBuyNow({ product: productWithPrice, size: selectedSize, fit: selectedFit, quantity });
     handleClose();
     router.push("/store/checkout?mode=buynow");
   }
@@ -118,7 +146,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             <div
               data-lenis-prevent
               data-lenis-prevent-touch
-              className="relative w-[88vw] max-w-[340px] sm:max-w-[420px] md:max-w-[700px] max-h-[76vh] sm:max-h-[82vh] overflow-y-auto pointer-events-auto flex flex-col"
+              className="relative w-[92vw] max-w-[400px] sm:max-w-[460px] md:max-w-[760px] max-h-[86vh] sm:max-h-[85vh] overflow-y-auto pointer-events-auto flex flex-col"
               style={{
                 background: "#0a0a0c",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -194,9 +222,9 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
               {/* Content Grid — Ultra Compact Mobile Stack & Desktop Split */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch flex-1">
-                {/* Left — Small Image Banner on mobile, Full Height on desktop */}
+                {/* Left — Image Gallery */}
                 <div
-                  className="relative w-full h-[130px] sm:h-[180px] md:h-full md:min-h-full flex flex-col flex-shrink-0"
+                  className="relative w-full h-[280px] sm:h-[340px] md:h-full md:min-h-[460px] flex flex-col flex-shrink-0"
                   style={{
                     borderRight: "1px solid rgba(255,255,255,0.06)",
                     borderBottom: "1px solid rgba(255,255,255,0.06)",
@@ -206,6 +234,13 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <ProductGallery
                     images={product.images}
                     productName={product.name}
+                    forcedIndex={
+                      requiresFit && selectedFit
+                        ? selectedFit.toLowerCase() === "oversized"
+                          ? 0
+                          : 1
+                        : undefined
+                    }
                   />
                 </div>
 
@@ -252,10 +287,10 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                           letterSpacing: "0.16em",
                           color: product.available
                             ? "var(--red)"
-                            : "rgba(255,255,255,0.3)",
+                            : "rgba(255,255,255,0.45)",
                         }}
                       >
-                        {product.available ? "● AVAILABLE" : "● OUT OF STOCK"}
+                        {product.available ? "● AVAILABLE" : "○ COMING SOON"}
                       </span>
                       {product.badge && (
                         <>
@@ -273,7 +308,14 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                               fontSize: "7px",
                               letterSpacing: "0.14em",
                               color: "#fff",
-                              background: "var(--red)",
+                              background:
+                                product.badge === "COMING SOON"
+                                  ? "rgba(255, 255, 255, 0.12)"
+                                  : "var(--red)",
+                              border:
+                                product.badge === "COMING SOON"
+                                  ? "1px solid rgba(255, 255, 255, 0.2)"
+                                  : "none",
                               padding: "1px 5px",
                             }}
                           >
@@ -284,14 +326,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     </div>
 
                     {/* Product name & subtitle */}
-                    <div style={{ marginBottom: "0.3rem" }}>
+                    <div style={{ marginBottom: "0.5rem" }}>
                       <h2
                         className="font-display"
                         style={{
-                          fontSize: "clamp(1.15rem, 3vw, 1.7rem)",
-                          letterSpacing: "0.04em",
-                          lineHeight: 1.05,
+                          fontSize: "clamp(1.8rem, 4.5vw, 2.5rem)",
+                          letterSpacing: "0.02em",
+                          lineHeight: 1,
                           color: "var(--text)",
+                          textTransform: "uppercase",
                         }}
                       >
                         {product.name}
@@ -299,10 +342,11 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                       <p
                         className="font-classified"
                         style={{
-                          fontSize: "7.5px",
-                          letterSpacing: "0.16em",
-                          color: "var(--text-muted)",
-                          marginTop: "0.15rem",
+                          fontSize: "8.5px",
+                          letterSpacing: "0.2em",
+                          color: "var(--red)",
+                          opacity: 0.8,
+                          marginTop: "0.25rem",
                         }}
                       >
                         OFFICIAL ISSUE
@@ -310,7 +354,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     </div>
 
                     {/* Description */}
-                    <p className="line-clamp-2 sm:line-clamp-none text-[11px] sm:text-[12px] text-white/65 font-light leading-relaxed mb-1.5">
+                    <p className="font-sans text-[13px] sm:text-[14px] text-white/60 font-normal leading-[1.7] mb-4 pr-2">
                       {product.description}
                     </p>
 
@@ -337,7 +381,24 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                           color: "var(--text)",
                         }}
                       >
-                        LKR {product.price.toLocaleString()}
+                        {!selectedFit && minFitPrice !== null ? (
+                          <>
+                            <span
+                              style={{
+                                fontSize: "0.7rem",
+                                letterSpacing: "0.12em",
+                                color: "rgba(255,255,255,0.4)",
+                                marginRight: "4px",
+                                fontFamily: "var(--font-mono)",
+                              }}
+                            >
+                              FROM
+                            </span>
+                            LKR {minFitPrice.toLocaleString()}
+                          </>
+                        ) : (
+                          `LKR ${effectivePrice.toLocaleString()}`
+                        )}
                       </span>
                     </div>
 
@@ -346,6 +407,36 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                       className="mission-line w-full"
                       style={{ opacity: 0.35, margin: "0.2rem 0 0.5rem 0" }}
                     />
+
+                    {/* Fit selector — Oversized / Regular */}
+                    {requiresFit && product.fitTypes && (
+                      <div
+                        style={{ marginBottom: "0.5rem" }}
+                        className="w-full text-left"
+                      >
+                        <FitSelector
+                          fitTypes={product.fitTypes}
+                          selected={selectedFit}
+                          error={fitError}
+                          onChange={(f) => {
+                            setSelectedFit(f);
+                            setFitError(false);
+                          }}
+                        />
+                        {fitError && (
+                          <p
+                            className="font-classified mt-1"
+                            style={{
+                              fontSize: "7.5px",
+                              letterSpacing: "0.14em",
+                              color: "var(--red)",
+                            }}
+                          >
+                            ⚠ PLEASE SELECT A FIT TYPE
+                          </p>
+                        )}
+                      </div>
+                    )}
 
                     {/* Size selector */}
                     {requiresSize && (
@@ -356,6 +447,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                         <SizeSelector
                           sizes={product.sizes}
                           selected={selectedSize}
+                          sizeChart={product.sizeChart}
                           onChange={(s) => {
                             setSelectedSize(s);
                             setSizeError(false);
@@ -379,15 +471,17 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     )}
 
                     {/* Quantity selector */}
-                    <div
-                      style={{ marginBottom: "0.6rem" }}
-                      className="w-full text-left"
-                    >
-                      <QuantitySelector
-                        value={quantity}
-                        onChange={setQuantity}
-                      />
-                    </div>
+                    {product.available && (
+                      <div
+                        style={{ marginBottom: "0.6rem" }}
+                        className="w-full text-left"
+                      >
+                        <QuantitySelector
+                          value={quantity}
+                          onChange={setQuantity}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Bottom Actions with ultra compact padding */}
@@ -395,24 +489,57 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     className="flex flex-col gap-1.5 w-full"
                     style={{ marginTop: "0.2rem" }}
                   >
-                    <button
-                      onClick={handleBuyNow}
-                      className="btn-mission w-full flex items-center justify-center gap-1.5"
-                      style={{ padding: "9px 14px", fontSize: "11px" }}
-                      id={`buynow-${product.id}`}
-                    >
-                      BUY NOW
-                      <ArrowRight size={12} />
-                    </button>
-                    <button
-                      onClick={handleAddToCart}
-                      className="btn-ghost w-full flex items-center justify-center gap-1.5"
-                      style={{ padding: "7.5px 14px", fontSize: "10.5px" }}
-                      id={`addtocart-${product.id}`}
-                    >
-                      <ShoppingBag size={12} />
-                      ADD TO CART
-                    </button>
+                    {!product.available ? (
+                      <div
+                        className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
+                        style={{
+                          background: "rgba(255, 255, 255, 0.03)",
+                          border: "1px dashed rgba(255, 255, 255, 0.2)",
+                        }}
+                      >
+                        <span
+                          className="font-classified"
+                          style={{
+                            fontSize: "9.5px",
+                            letterSpacing: "0.2em",
+                            color: "rgba(255, 255, 255, 0.8)",
+                          }}
+                        >
+                          MISSION STANDBY // COMING SOON
+                        </span>
+                        <span
+                          className="font-classified mt-0.5"
+                          style={{
+                            fontSize: "7.5px",
+                            letterSpacing: "0.12em",
+                            color: "rgba(255, 255, 255, 0.4)",
+                          }}
+                        >
+                          ITEM CURRENTLY UNAVAILABLE FOR ORDER
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleBuyNow}
+                          className="btn-mission w-full flex items-center justify-center gap-1.5"
+                          style={{ padding: "9px 14px", fontSize: "11px" }}
+                          id={`buynow-${product.id}`}
+                        >
+                          BUY NOW
+                          <ArrowRight size={12} />
+                        </button>
+                        <button
+                          onClick={handleAddToCart}
+                          className="btn-ghost w-full flex items-center justify-center gap-1.5"
+                          style={{ padding: "7.5px 14px", fontSize: "10.5px" }}
+                          id={`addtocart-${product.id}`}
+                        >
+                          <ShoppingBag size={12} />
+                          ADD TO CART
+                        </button>
+                      </>
+                    )}
                   </div>
 
                   {/* Toast confirmation */}

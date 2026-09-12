@@ -9,7 +9,7 @@ const FOOTER_LINKS = [
   { label: "ABOUT", href: "/#mission" },
   { label: "CONFERENCE TEAM", href: "/team" },
   { label: "PARTNERS", href: "/partners" },
-  // TEMPORARILY DISABLED: { label: "STORE", href: "/store", locked: true },
+  { label: "STORE", href: "/store" },
   { label: "ROOM ALLOCATION", href: "/delegates", locked: true },
   { label: "REGISTER", href: "/register" },
 ];

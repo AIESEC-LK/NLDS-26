@@ -13,7 +13,7 @@ export interface PaymentConfig {
   accountName: string;
   accountNumber: string;
   branch: string;
-  referenceFormat: string; // Describes how to format the payment reference
+  referenceFormat: string;
   referenceExample: string;
 }
 
@@ -21,10 +21,10 @@ export interface PaymentConfig {
  * REPLACE THESE VALUES WITH THE OFFICIAL BANK DETAILS.
  */
 export const PAYMENT_CONFIG: PaymentConfig = {
-  bankName: "PEOPLE'S BANK",
-  accountName: "AIESEC IN SRI LANKA",
-  accountNumber: "XXXX XXXX XXXX XXXX", // ← Replace with real account number
-  branch: "YOUR BRANCH NAME", // ← Replace with real branch
-  referenceFormat: "Your full name + NLDS26 (e.g. JOHN DOE NLDS26)",
-  referenceExample: "JOHN DOE NLDS26",
+  bankName: "Hatton National Bank",
+  accountName: "P. S. U. S. Perera",
+  accountNumber: "003020588150",
+  branch: "Head Office",
+  referenceFormat: "Your full name + Entity",
+  referenceExample: "Sasin Perera NSBM",
 };
