@@ -1,14 +1,10 @@
-/**
- * NLDS'26 Merchandise — Product Data
- *
- * This is the single source of truth for all merchandise products.
- * Add, remove, or modify products here. The UI will automatically reflect changes.
- *
- * To update products for a new collection, edit this file only.
- */
-
 export type ProductCategory =
   "combo" | "tshirt" | "wristband" | "stickers" | "bucket-hat";
+
+export interface SizeChart {
+  oversized: string; // image path for oversized chart
+  regular: string;   // image path for regular chart
+}
 
 export interface Product {
   id: string;
@@ -16,12 +12,15 @@ export interface Product {
   category: ProductCategory;
   description: string;
   shortDescription: string;
-  price: number; // in LKR
-  images: string[]; // paths relative to /public
+  price: number; // in LKR — base/fallback price
+  fitPrices?: Record<string, number>; // per-fit price override e.g. { Oversized: 2200, Regular: 1900 }
+  images: string[]; // paths relative to /public (up to 3)
   sizes: string[]; // empty array = no size selector
+  fitTypes?: string[]; // e.g. ["Oversized", "Regular"] — if set, fit selection is required
   available: boolean;
   itemCode: string;
   badge?: string; // e.g. "BEST VALUE", "LIMITED"
+  sizeChart?: SizeChart; // optional size chart images for tshirts
 }
 
 export const PRODUCTS: Product[] = [
@@ -30,29 +29,51 @@ export const PRODUCTS: Product[] = [
     name: "NLDS'26 COMBO PACK",
     category: "combo",
     description:
-      "The complete operative kit. Everything you need to gear up for the mission. Includes the official NLDS'26 T-Shirt, wrist band, and sticker pack. Best value for the full NLDS'26 experience.",
+      "The complete operative kit. Everything you need to gear up for the mission. Includes the official NLDS'26 T-Shirt, wrist band, bucket hat, and sticker pack. Best value for the full NLDS'26 experience.",
     shortDescription:
-      "Complete operative kit — T-Shirt, wrist band & stickers.",
+      "Complete operative kit — T-Shirt, wrist band, bucket hat & stickers.",
     price: 5500,
-    images: ["/images/merch/combo-1.jpg"],
-    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
+    fitPrices: { Oversized: 2200, Regular: 1900 },
+    images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217458/12_huvvwt.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217460/13_mgxqya.png"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    fitTypes: ["Oversized", "Regular"],
     available: true,
     itemCode: "NLDS26-001",
     badge: "BEST VALUE",
+    sizeChart: {
+      oversized: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Oversize_dyqjdc.png",
+      regular: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Regular_pvxpwb.png",
+    },
   },
   {
     id: "tshirt-001",
-    name: "NLDS'26 T-SHIRT",
+    name: "NLDS'26 OFFICIAL DELEGATE T-SHIRT",
     category: "tshirt",
     description:
-      "Official mission apparel. Premium quality cotton T-Shirt with the NLDS'26 Mission Impossible graphic. Wear the mission wherever you go. Limited edition, official issue.",
+      "Official mission apparel. Premium quality cotton T-Shirt with the Ignite The Leader Within. Wear the mission wherever you go. Limited edition.",
     shortDescription:
       "Official mission apparel. Premium cotton. Limited edition.",
     price: 3500,
-    images: ["/images/merch/tshirt-1.jpg"],
-    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
-    available: true,
+    fitPrices: { Oversized: 2200, Regular: 1900 },
+    images: [
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217445/2_gycikk.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217445/8_tracy0.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217443/9_mmzmlo.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217436/3_kz9d4d.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217451/10_tmstxj.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217454/11_qtbxql.png",
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    fitTypes: ["Oversized", "Regular"],
+    available: false,
     itemCode: "NLDS26-002",
+    badge: "COMING SOON",
+    sizeChart: {
+      oversized: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Oversize_dyqjdc.png",
+      regular: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Regular_pvxpwb.png",
+    },
   },
   {
     id: "wristband-001",
@@ -62,38 +83,42 @@ export const PRODUCTS: Product[] = [
       "Official silicone wrist band. Compact mission identifier. Wear it as a mark of your commitment to the NLDS'26 mission. One size fits all.",
     shortDescription: "Official mission identifier. One size fits all.",
     price: 350,
-    images: ["/images/merch/wristband-1.jpg"],
+    images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217450/1_imggci.png"],
     sizes: [], // no size selector needed
-    available: true,
+    available: false,
     itemCode: "NLDS26-003",
+    badge: "COMING SOON",
   },
   {
     id: "stickers-001",
     name: "NLDS'26 STICKER PACK",
     category: "stickers",
     description:
-      "Pack of 5 premium high-quality vinyl stickers. NLDS'26 Mission Impossible themed designs. Waterproof. Perfect for laptops, notebooks, and equipment.",
-    shortDescription: "5 premium vinyl stickers. Waterproof. Mission themed.",
+      "NLDS'26 Mission Impossible themed designs. Perfect for laptops, notebooks, and equipment.",
+    shortDescription: "Mission themed.",
     price: 450,
-    images: ["/images/merch/stickers-1.jpg"],
+    images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217449/6_m1a7xc.png",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1789217451/5_hokdcw.png"
+    ],
     sizes: [], // no size selector needed
-    available: true,
+    available: false,
     itemCode: "NLDS26-004",
+    badge: "COMING SOON",
   },
   {
     id: "bucket-hat-001",
     name: "NLDS'26 BUCKET HAT",
     category: "bucket-hat",
     description:
-      "Official NLDS'26 bucket hat. Structured, premium quality. NLDS'26 Mission Impossible embroidered logo. The operative's field headgear. One size fits most.",
+      "Official AIESEC bucket hat. premium quality. AIESEC Man embroidered logo. One size fits most.",
     shortDescription:
       "Official operative headgear. Embroidered logo. One size fits most.",
     price: 2500,
-    images: ["/images/merch/hat-1.jpg"],
+    images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217439/7_px5vlk.png"],
     sizes: [], // one size fits most
-    available: true,
+    available: false,
     itemCode: "NLDS26-005",
-    badge: "LIMITED",
+    badge: "COMING SOON",
   },
 ];
 

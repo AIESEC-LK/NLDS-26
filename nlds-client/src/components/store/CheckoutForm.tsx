@@ -223,6 +223,7 @@ export default function CheckoutForm() {
         name: buyNowSession.product.name,
         itemCode: buyNowSession.product.itemCode,
         size: buyNowSession.size,
+        fit: buyNowSession.fit,
         quantity: buyNowSession.quantity,
         unitPrice: buyNowSession.product.price,
         totalPrice: buyNowSession.product.price * buyNowSession.quantity,
@@ -234,7 +235,8 @@ export default function CheckoutForm() {
         productId: i.productId,
         name: i.name,
         itemCode: i.itemCode,
-        size: i.size,
+        size: i.size ?? null,
+        fit: i.fit ?? null,
         quantity: i.quantity,
         unitPrice: i.price,
         totalPrice: i.price * i.quantity,
@@ -276,7 +278,7 @@ export default function CheckoutForm() {
         }
         // Navigate to confirmation
         router.push(
-          `/store/confirmation?orderId=${encodeURIComponent(result.orderId)}&name=${encodeURIComponent(data.fullName)}&total=${total}`,
+          `/store/confirmation?orderId=${encodeURIComponent(result.orderId)}&name=${encodeURIComponent(data.fullName)}&total=${total}&items=${encodeURIComponent(JSON.stringify(orderItems))}`,
         );
       } else {
         setSubmitError("Submission failed. Please try again.");

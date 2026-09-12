@@ -106,8 +106,18 @@ export default function ProductCard({
               className="absolute top-3.5 right-3.5 z-10"
               style={{
                 padding: "4px 10px",
-                background: "var(--red)",
-                boxShadow: "0 0 12px rgba(196,30,58,0.4)",
+                background:
+                  product.badge === "COMING SOON"
+                    ? "rgba(10, 10, 12, 0.88)"
+                    : "var(--red)",
+                border:
+                  product.badge === "COMING SOON"
+                    ? "1px solid rgba(255, 255, 255, 0.22)"
+                    : "none",
+                boxShadow:
+                  product.badge === "COMING SOON"
+                    ? "0 4px 12px rgba(0,0,0,0.5)"
+                    : "0 0 12px rgba(196,30,58,0.4)",
               }}
             >
               <span
@@ -115,7 +125,10 @@ export default function ProductCard({
                 style={{
                   fontSize: "8.5px",
                   letterSpacing: "0.18em",
-                  color: "#fff",
+                  color:
+                    product.badge === "COMING SOON"
+                      ? "rgba(255,255,255,0.85)"
+                      : "#fff",
                 }}
               >
                 {product.badge}
@@ -223,10 +236,10 @@ export default function ProductCard({
                   letterSpacing: "0.22em",
                   color: product.available
                     ? "var(--red)"
-                    : "rgba(255,255,255,0.25)",
+                    : "rgba(255,255,255,0.45)",
                 }}
               >
-                {product.available ? "● AVAILABLE" : "● SOLD OUT"}
+                {product.available ? "● AVAILABLE" : "○ COMING SOON"}
               </span>
             </div>
 
@@ -273,20 +286,41 @@ export default function ProductCard({
                   color: "var(--text)",
                 }}
               >
-                LKR {product.price.toLocaleString()}
+                {product.fitPrices ? (
+                  <>
+                    <span
+                      style={{
+                        fontSize: "0.65rem",
+                        letterSpacing: "0.14em",
+                        color: "rgba(255,255,255,0.4)",
+                        marginRight: "4px",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      FROM
+                    </span>
+                    LKR {Math.min(...Object.values(product.fitPrices)).toLocaleString()}
+                  </>
+                ) : (
+                  `LKR ${product.price.toLocaleString()}`
+                )}
               </div>
             </div>
 
             {/* CTA button */}
             <div
-              className="flex items-center justify-between px-4 py-2.5 mt-1 transition-colors group-hover:bg-[var(--red)] group-hover:border-[var(--red)]"
+              className={`flex items-center justify-between px-4 py-2.5 mt-1 transition-colors ${
+                product.available
+                  ? "group-hover:bg-[var(--red)] group-hover:border-[var(--red)]"
+                  : "group-hover:border-[var(--red)]"
+              }`}
               style={{
                 background: "rgba(255,255,255,0.025)",
                 border: "1px solid rgba(255,255,255,0.08)",
               }}
             >
               <span className="font-classified text-[10px] tracking-[0.22em] text-white/80 group-hover:text-white transition-colors">
-                VIEW ITEM SPECIFICATIONS
+                {product.available ? "VIEW ITEM SPECIFICATIONS" : "COMING SOON — PREVIEW"}
               </span>
               <ArrowRight
                 size={13}

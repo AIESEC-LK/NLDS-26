@@ -42,16 +42,16 @@ interface CartContextValue {
   closeCart: () => void;
 
   // Actions
-  addItem: (product: Product, size: string | null, quantity: number) => void;
-  removeItem: (productId: string, size: string | null) => void;
-  updateQty: (productId: string, size: string | null, quantity: number) => void;
+  addItem: (product: Product, size: string | null, fit: string | null, quantity: number, priceOverride?: number) => void;
+  removeItem: (productId: string, size: string | null, fit: string | null) => void;
+  updateQty: (productId: string, size: string | null, fit: string | null, quantity: number) => void;
   clearCart: () => void;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
-function itemKey(productId: string, size: string | null) {
-  return `${productId}::${size ?? ""}`;
+function itemKey(productId: string, size: string | null, fit: string | null) {
+  return `${productId}::${size ?? ""}::${fit ?? ""}`;
 }
 
 function calcSubtotal(items: CartItem[]) {
@@ -68,7 +68,13 @@ function loadFromStorage(): CartItem[] {
     const raw = localStorage.getItem(CART_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    // Normalize any stale items that predate the `fit` field
+    return parsed.map((item: CartItem) => ({
+      ...item,
+      size: item.size ?? null,
+      fit: item.fit ?? null,
+    }));
   } catch {
     return [];
   }
@@ -109,15 +115,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, hydrated]);
 
   const addItem = useCallback(
-    (product: Product, size: string | null, quantity: number) => {
+    (product: Product, size: string | null, fit: string | null, quantity: number, priceOverride?: number) => {
       setItems((prev) => {
-        const key = itemKey(product.id, size);
-        const existing = prev.find((i) => itemKey(i.productId, i.size) === key);
+        const key = itemKey(product.id, size, fit);
+        const existing = prev.find((i) => itemKey(i.productId, i.size, i.fit) === key);
 
         if (existing) {
           // Increase quantity of existing item
           return prev.map((i) =>
-            itemKey(i.productId, i.size) === key
+            itemKey(i.productId, i.size, i.fit) === key
               ? { ...i, quantity: i.quantity + quantity }
               : i,
           );
@@ -129,8 +135,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           name: product.name,
           category: product.category,
           itemCode: product.itemCode,
-          price: product.price,
+          price: priceOverride ?? product.price,
           size,
+          fit,
           quantity,
           image: product.images[0] ?? "",
         };
@@ -141,23 +148,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const removeItem = useCallback((productId: string, size: string | null) => {
+  const removeItem = useCallback((productId: string, size: string | null, fit: string | null) => {
     setItems((prev) =>
       prev.filter(
-        (i) => itemKey(i.productId, i.size) !== itemKey(productId, size),
+        (i) => itemKey(i.productId, i.size, i.fit) !== itemKey(productId, size, fit),
       ),
     );
   }, []);
 
   const updateQty = useCallback(
-    (productId: string, size: string | null, quantity: number) => {
+    (productId: string, size: string | null, fit: string | null, quantity: number) => {
       if (quantity < 1) {
-        removeItem(productId, size);
+        removeItem(productId, size, fit);
         return;
       }
       setItems((prev) =>
         prev.map((i) =>
-          itemKey(i.productId, i.size) === itemKey(productId, size)
+          itemKey(i.productId, i.size, i.fit) === itemKey(productId, size, fit)
             ? { ...i, quantity }
             : i,
         ),

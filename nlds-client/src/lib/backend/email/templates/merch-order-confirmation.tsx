@@ -12,6 +12,7 @@ interface OrderItem {
   name: string;
   itemCode?: string;
   size?: string | null;
+  fit?: string | null;
   quantity: number;
   unitPrice: number;
 }
@@ -138,6 +139,7 @@ export const MerchOrderConfirmationEmail: React.FC<
                     <Text style={itemName}>
                       {item.name}
                       {item.size ? ` [${item.size}]` : ""}
+                      {item.fit ? ` [${item.fit}]` : ""}
                       {item.itemCode ? ` (${item.itemCode})` : ""}
                     </Text>
                   </Column>

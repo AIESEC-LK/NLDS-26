@@ -27,6 +27,7 @@ interface IncomingOrderItem {
   name: string;
   itemCode?: string;
   size?: string | null;
+  fit?: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice?: number;
@@ -103,8 +104,9 @@ export async function POST(request: Request) {
     const itemsSummary = items
       .map((item) => {
         const sizeStr = item.size ? ` [Size: ${item.size}]` : "";
+        const fitStr = item.fit ? ` [Fit: ${item.fit}]` : "";
         const itemCodeStr = item.itemCode ? ` (${item.itemCode})` : "";
-        return `${item.name}${itemCodeStr}${sizeStr} x${item.quantity} = LKR ${(item.unitPrice * item.quantity).toLocaleString()}`;
+        return `${item.name}${itemCodeStr}${sizeStr}${fitStr} x${item.quantity} = LKR ${(item.unitPrice * item.quantity).toLocaleString()}`;
       })
       .join(" | ");
 
@@ -192,6 +194,7 @@ export async function POST(request: Request) {
             name: i.name,
             itemCode: i.itemCode,
             size: i.size,
+            fit: i.fit,
             quantity: i.quantity,
             unitPrice: i.unitPrice,
           })),

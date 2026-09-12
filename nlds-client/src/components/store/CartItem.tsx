@@ -72,7 +72,7 @@ export default function CartItem({ item }: CartItemProps) {
               {item.name}
             </p>
             <button
-              onClick={() => removeItem(item.productId, item.size)}
+              onClick={() => removeItem(item.productId, item.size, item.fit)}
               aria-label={`Remove ${item.name}`}
               className="flex-shrink-0 transition-all duration-200 flex items-center justify-center rounded"
               style={{
@@ -133,6 +133,29 @@ export default function CartItem({ item }: CartItemProps) {
                 </span>
               </>
             )}
+            {item.fit && (
+              <>
+                <span
+                  style={{ color: "rgba(255,255,255,0.2)", fontSize: "9px" }}
+                >
+                  ·
+                </span>
+                <span
+                  className="font-classified"
+                  style={{
+                    fontSize: "8px",
+                    letterSpacing: "0.12em",
+                    color: "#fff",
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    padding: "1px 6px",
+                    borderRadius: "2px",
+                  }}
+                >
+                  {item.fit.toUpperCase()}
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -148,7 +171,7 @@ export default function CartItem({ item }: CartItemProps) {
           >
             <button
               onClick={() =>
-                updateQty(item.productId, item.size, item.quantity - 1)
+                updateQty(item.productId, item.size, item.fit, item.quantity - 1)
               }
               disabled={item.quantity <= 1}
               aria-label="Decrease quantity"
@@ -181,7 +204,7 @@ export default function CartItem({ item }: CartItemProps) {
             </span>
             <button
               onClick={() =>
-                updateQty(item.productId, item.size, item.quantity + 1)
+                updateQty(item.productId, item.size, item.fit, item.quantity + 1)
               }
               aria-label="Increase quantity"
               className="flex items-center justify-center transition-colors"

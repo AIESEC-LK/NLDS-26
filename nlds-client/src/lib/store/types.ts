@@ -17,6 +17,7 @@ export interface CartItem {
   itemCode: string;
   price: number;
   size: string | null; // null for products without sizes
+  fit: string | null;  // e.g. "Oversized" | "Regular" | null
   quantity: number;
   image: string; // first image from product
 }
@@ -45,6 +46,7 @@ export interface OrderItem {
   name: string;
   itemCode: string;
   size: string | null;
+  fit: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
@@ -74,5 +76,6 @@ export interface OrderResult {
 export interface BuyNowSession {
   product: Product;
   size: string | null;
+  fit: string | null;
   quantity: number;
 }
