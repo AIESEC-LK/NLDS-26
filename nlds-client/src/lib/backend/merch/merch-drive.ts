@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import { env } from "@/lib/config/env";
 import { Readable } from "stream";
+import { withRetry } from "@/lib/backend/utils/retry";
 
 export class MerchDriveClient {
   private drive: any;
@@ -72,12 +73,14 @@ export class MerchDriveClient {
     };
 
     try {
-      const response = await this.drive.files.create({
-        requestBody: fileMetadata,
-        media: media,
-        fields: "id, webViewLink, webContentLink",
-        supportsAllDrives: true,
-      });
+      const response = await withRetry(() =>
+        this.drive.files.create({
+          requestBody: fileMetadata,
+          media: media,
+          fields: "id, webViewLink, webContentLink",
+          supportsAllDrives: true,
+        }),
+      );
 
       const fileId = response.data.id;
       if (!fileId) {
@@ -86,13 +89,15 @@ export class MerchDriveClient {
 
       // Try setting permission to anyone with link can view (so organizers can review receipts easily)
       try {
-        await this.drive.permissions.create({
-          fileId: fileId,
-          requestBody: {
-            role: "reader",
-            type: "anyone",
-          },
-        });
+        await withRetry(() =>
+          this.drive.permissions.create({
+            fileId: fileId,
+            requestBody: {
+              role: "reader",
+              type: "anyone",
+            },
+          }),
+        );
       } catch (permErr: any) {
         console.warn(
           "[MerchDriveClient] Could not set public view permission (non-critical):",

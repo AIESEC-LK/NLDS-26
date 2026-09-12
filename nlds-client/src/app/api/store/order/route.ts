@@ -11,6 +11,21 @@ import { verifyTurnstileToken } from "@/lib/captcha";
 
 export const maxDuration = 60;
 
+// Global cached nodemailer transporter to prevent SMTP initialization limits
+let cachedTransporter: any = null;
+async function getEmailTransporter() {
+  if (!cachedTransporter) {
+    const nodemailer = await import("nodemailer");
+    const merchSmtpUser = env.EMAIL_MERCH_USER || process.env.EMAIL_MERCH_USER;
+    const merchSmtpPass = env.EMAIL_MERCH_PASS || process.env.EMAIL_MERCH_PASS;
+    cachedTransporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: merchSmtpUser, pass: merchSmtpPass },
+    });
+  }
+  return cachedTransporter;
+}
+
 /** Generate a unique Order ID in the format NLDS26-(Entity)Randomnumber, e.g., NLDS26-CS84920 */
 function generateOrderId(entity: string): string {
   const primaryEntity =
@@ -149,10 +164,10 @@ export async function POST(request: Request) {
       receiptFile.type || "application/octet-stream",
     );
 
-    // 4. Append Order Row to Google Sheets
+    // 4. Run Sheets, DB, and Email concurrently
     const sheetsClient = new MerchSheetsClient();
-    console.log(`[Store Order API] Appending order ${orderId} to Google Sheet...`);
-    await sheetsClient.appendOrder({
+    
+    const sheetsPromise = sheetsClient.appendOrder({
       orderId,
       fullName,
       email,
@@ -163,12 +178,11 @@ export async function POST(request: Request) {
       totalAmount,
       paymentStatus: "PENDING_VERIFICATION",
       receiptDriveUrl,
-    });
+    }).then(() => console.log(`[Store Order API] Order ${orderId} appended to Google Sheet.`));
 
-    // 4b. Persist order to database
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore – prisma.merchOrder exists at runtime; tsc resolves stale @prisma/client stub
-    await prisma.merchOrder.create({
+    // @ts-ignore – prisma.merchOrder exists at runtime
+    const dbPromise = prisma.merchOrder.create({
       data: {
         id: randomUUID(),
         orderId,
@@ -185,24 +199,12 @@ export async function POST(request: Request) {
         items: items as any,
         updatedAt: new Date(),
       },
-    });
-    console.log(`[Store Order API] Order ${orderId} persisted to database.`);
+    }).then(() => console.log(`[Store Order API] Order ${orderId} persisted to database.`));
 
-    console.log(`[Store Order API] Order ${orderId} successfully processed.`);
-
-    // 5. Send confirmation email to customer (using merch-specific SMTP)
-    try {
-      const merchSmtpUser =
-        env.EMAIL_MERCH_USER || process.env.EMAIL_MERCH_USER;
-      const merchSmtpPass =
-        env.EMAIL_MERCH_PASS || process.env.EMAIL_MERCH_PASS;
-
-      const nodemailer = await import("nodemailer");
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: { user: merchSmtpUser, pass: merchSmtpPass },
-      });
-
+    const emailPromise = (async () => {
+      const transporter = await getEmailTransporter();
+      const merchSmtpUser = env.EMAIL_MERCH_USER || process.env.EMAIL_MERCH_USER;
+      
       const emailHtml = await render(
         React.createElement(MerchOrderConfirmationEmail, {
           orderId,
@@ -227,12 +229,19 @@ export async function POST(request: Request) {
         html: emailHtml,
       });
       console.log(`[Store Order API] Confirmation email sent to ${email} via merch SMTP.`);
-    } catch (emailError: any) {
-      // Non-fatal: log but don't fail the order
-      console.error(
-        `[Store Order API] Failed to send confirmation email: ${emailError.message}`,
-      );
-    }
+    })();
+
+    // Await all background tasks concurrently
+    const results = await Promise.allSettled([sheetsPromise, dbPromise, emailPromise]);
+
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        const taskName = index === 0 ? "Sheets Append" : index === 1 ? "DB Persist" : "Email Send";
+        console.error(`[Store Order API] ${taskName} failed for order ${orderId}:`, result.reason);
+      }
+    });
+
+    console.log(`[Store Order API] Order ${orderId} successfully processed.`);
 
     return NextResponse.json({
       success: true,
