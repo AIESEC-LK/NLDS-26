@@ -31,7 +31,7 @@ export const PRODUCTS: Product[] = [
     description:
       "The complete operative kit. Everything you need to gear up for the mission. Includes the official NLDS'26 T-Shirt, wrist band, and sticker pack. Best value for the full NLDS'26 experience.",
     shortDescription:
-      "Complete operative kit — T-Shirt, wrist band, bucket hat & stickers.",
+      "Complete operative kit — T-Shirt, wrist band, & stickers.",
     price: 5500,
     fitPrices: { Oversized: 2200, Regular: 1900 },
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789236358/12_fpvwli.png",
