@@ -37,14 +37,14 @@ export const PRODUCTS: Product[] = [
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789236358/12_fpvwli.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789236360/13_a2jzmb.png"
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["XS", "S", "M", "L", "XL"],
     fitTypes: ["Oversized", "Regular"],
     available: true,
     itemCode: "NLDS26-001",
     badge: "BEST VALUE",
     sizeChart: {
-      oversized: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Oversize_dyqjdc.png",
-      regular: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Regular_pvxpwb.png",
+      oversized: "/images/merch/OverSize chart.jpg",
+      regular: "/images/merch/RegularSize chart.jpg",
     },
   },
   {
@@ -65,14 +65,14 @@ export const PRODUCTS: Product[] = [
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217451/10_tmstxj.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217454/11_qtbxql.png",
     ],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["XS", "S", "M", "L", "XL"],
     fitTypes: ["Oversized", "Regular"],
     available: false,
     itemCode: "NLDS26-002",
     badge: "COMING SOON",
     sizeChart: {
-      oversized: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Oversize_dyqjdc.png",
-      regular: "https://res.cloudinary.com/daamlqcer/image/upload/v1789211011/Regular_pvxpwb.png",
+      oversized: "/images/merch/OverSize chart.jpg",
+      regular: "/images/merch/RegularSize chart.jpg",
     },
   },
   {
