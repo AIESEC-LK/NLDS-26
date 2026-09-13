@@ -146,7 +146,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             <div
               data-lenis-prevent
               data-lenis-prevent-touch
-              className="relative w-[92vw] max-w-[400px] sm:max-w-[460px] md:max-w-[880px] max-h-[95vh] sm:max-h-[90vh] overflow-hidden pointer-events-auto flex flex-col"
+              className="relative w-[95vw] max-w-[400px] sm:max-w-[460px] md:max-w-[880px] max-h-[96vh] sm:max-h-[90vh] overflow-hidden pointer-events-auto flex flex-col"
               style={{
                 background: "#0a0a0c",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -220,13 +220,33 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 </button>
               </div>
 
-              {/* Content Grid — Ultra Compact Mobile Stack & Desktop Split */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch flex-1">
-                {/* Left — Image Gallery */}
+              {/* Content Grid — Mobile Stack & Desktop Split */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch flex-1 min-h-0 overflow-hidden">
+                {/* Left — Image Gallery (hidden on smallest mobile, visible sm+) */}
                 <div
-                  className="relative w-full h-[280px] sm:h-[340px] md:h-full md:min-h-[460px] flex flex-col flex-shrink-0"
+                  className="relative w-full hidden sm:flex md:flex h-[220px] sm:h-[260px] md:h-full md:min-h-[460px] flex-col flex-shrink-0"
                   style={{
                     borderRight: "1px solid rgba(255,255,255,0.06)",
+                    borderBottom: "1px solid rgba(255,255,255,0.06)",
+                    background: "#08080a",
+                  }}
+                >
+                  <ProductGallery
+                    images={product.images}
+                    productName={product.name}
+                    forcedIndex={
+                      requiresFit && selectedFit
+                        ? selectedFit.toLowerCase() === "oversized"
+                          ? 0
+                          : 1
+                        : undefined
+                    }
+                  />
+                </div>
+                {/* Tiny image strip — only shown on very small mobile (below sm) */}
+                <div
+                  className="relative w-full flex sm:hidden h-[140px] flex-col flex-shrink-0"
+                  style={{
                     borderBottom: "1px solid rgba(255,255,255,0.06)",
                     background: "#08080a",
                   }}
@@ -246,7 +266,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
                 {/* Right — Details with ultra compact mobile padding & spacing */}
                 <div
-                  className="p-3 sm:p-4 md:p-5 flex flex-col justify-between flex-1 overflow-y-auto"
+                  className="p-3 sm:p-4 md:p-5 flex flex-col flex-1 overflow-y-auto min-h-0"
                   style={{
                     textAlign: "left",
                     alignItems: "flex-start",
@@ -484,11 +504,8 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     )}
                   </div>
 
-                  {/* Bottom Actions with ultra compact padding */}
-                  <div
-                    className="flex flex-col gap-1.5 w-full"
-                    style={{ marginTop: "0.2rem" }}
-                  >
+                  {/* Desktop-only inline actions (hidden on mobile — shown in sticky footer instead) */}
+                  <div className="hidden md:flex flex-col gap-1.5 w-full mt-auto pt-2">
                     {!product.available ? (
                       <div
                         className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
@@ -569,18 +586,104 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-
-                  {/* Bottom dismiss for mobile convenience */}
-                  <div className="w-full flex justify-center mt-1.5">
-                    <button
-                      onClick={handleClose}
-                      className="font-classified text-[8px] tracking-[0.18em] text-white/30 hover:text-white transition-colors cursor-pointer py-0.5"
-                      style={{ background: "transparent", border: "none" }}
-                    >
-                      [ CLOSE FILE ]
-                    </button>
-                  </div>
                 </div>
+              </div>
+
+              {/* ── Mobile Sticky Action Footer (visible only below md) ── */}
+              <div
+                className="md:hidden flex-shrink-0 flex flex-col gap-1.5 px-3 pt-2 pb-3"
+                style={{
+                  borderTop: "1px solid rgba(255,255,255,0.07)",
+                  background: "rgba(10,10,12,0.98)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                {!product.available ? (
+                  <div
+                    className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px dashed rgba(255, 255, 255, 0.2)",
+                    }}
+                  >
+                    <span
+                      className="font-classified"
+                      style={{
+                        fontSize: "9.5px",
+                        letterSpacing: "0.2em",
+                        color: "rgba(255, 255, 255, 0.8)",
+                      }}
+                    >
+                      MISSION STANDBY // COMING SOON
+                    </span>
+                    <span
+                      className="font-classified mt-0.5"
+                      style={{
+                        fontSize: "7.5px",
+                        letterSpacing: "0.12em",
+                        color: "rgba(255, 255, 255, 0.4)",
+                      }}
+                    >
+                      ITEM CURRENTLY UNAVAILABLE FOR ORDER
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    {/* Mobile toast */}
+                    <AnimatePresence>
+                      {toast === "added" && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 3 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -3 }}
+                          className="flex items-center gap-2 px-2.5 py-1.5 w-full"
+                          style={{
+                            background: "rgba(196,30,58,0.08)",
+                            border: "1px solid rgba(196,30,58,0.25)",
+                          }}
+                        >
+                          <Check size={11} style={{ color: "var(--red)" }} />
+                          <span
+                            className="font-classified"
+                            style={{
+                              fontSize: "7.5px",
+                              letterSpacing: "0.16em",
+                              color: "var(--text)",
+                            }}
+                          >
+                            ITEM ADDED TO MISSION INVENTORY ✓
+                          </span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <button
+                      onClick={handleBuyNow}
+                      className="btn-mission w-full flex items-center justify-center gap-1.5"
+                      style={{ padding: "10px 14px", fontSize: "11px" }}
+                      id={`buynow-mobile-${product.id}`}
+                    >
+                      BUY NOW
+                      <ArrowRight size={12} />
+                    </button>
+                    <button
+                      onClick={handleAddToCart}
+                      className="btn-ghost w-full flex items-center justify-center gap-1.5"
+                      style={{ padding: "8px 14px", fontSize: "10.5px" }}
+                      id={`addtocart-mobile-${product.id}`}
+                    >
+                      <ShoppingBag size={12} />
+                      ADD TO CART
+                    </button>
+                  </>
+                )}
+                {/* Dismiss link */}
+                <button
+                  onClick={handleClose}
+                  className="font-classified text-[8px] tracking-[0.18em] text-white/30 hover:text-white transition-colors cursor-pointer py-0.5 w-full text-center"
+                  style={{ background: "transparent", border: "none" }}
+                >
+                  [ CLOSE FILE ]
+                </button>
               </div>
             </div>
           </motion.div>
