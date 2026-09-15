@@ -131,6 +131,21 @@ export async function POST(request: Request) {
       documents,
     );
 
+    // Non-blocking ping to the Admin Portal for instant Google Sheets sync
+    if (process.env.ADMIN_PORTAL_URL && process.env.CRON_SECRET) {
+      // We do not await this to avoid slowing down the user's response time
+      fetch(`${process.env.ADMIN_PORTAL_URL}/api/webhook/sync-registration`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.CRON_SECRET}`
+        },
+        body: JSON.stringify({ registrationId: registration.id })
+      }).catch((error) => {
+        console.error("Failed to ping Admin webhook for live sync:", error);
+      });
+    }
+
     // 4. Trigger Webhooks and Integrations.
     // VERCEL PATCH: Must be explicitly awaited, or Vercel deletes the memory context instantly.
     const entityName = resolvedEntity;
