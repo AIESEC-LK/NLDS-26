@@ -133,17 +133,25 @@ export async function POST(request: Request) {
 
     // Ping to the Admin Portal for instant Google Sheets sync
     if (process.env.ADMIN_PORTAL_URL && process.env.CRON_SECRET) {
-      // VERCEL FIX: We MUST await this fetch request. If we don't, Vercel instantly kills the serverless function before the fetch finishes.
-      await fetch(`${process.env.ADMIN_PORTAL_URL}/api/webhook/sync-registration`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CRON_SECRET}`
-        },
-        body: JSON.stringify({ registrationId: registration.id })
-      }).catch((error) => {
-        console.error("Failed to ping Admin webhook for live sync:", error);
-      });
+      try {
+        console.log(`[LIVE SYNC] Sending registration ${registration.id} to Admin Portal...`);
+        // VERCEL FIX: We MUST await this fetch request. If we don't, Vercel instantly kills the serverless function before the fetch finishes.
+        const syncRes = await fetch(`${process.env.ADMIN_PORTAL_URL}/api/webhook/sync-registration`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.CRON_SECRET}`
+          },
+          body: JSON.stringify({ registrationId: registration.id })
+        });
+        
+        console.log(`[LIVE SYNC] Admin Portal responded with status: ${syncRes.status}`);
+        if (!syncRes.ok) {
+          console.error("[LIVE SYNC] Admin webhook failed. Response text:", await syncRes.text());
+        }
+      } catch (error) {
+        console.error("[LIVE SYNC] Failed to reach Admin webhook:", error);
+      }
     }
 
     // 4. Trigger Webhooks and Integrations.
