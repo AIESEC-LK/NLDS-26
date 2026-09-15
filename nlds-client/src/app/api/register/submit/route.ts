@@ -131,10 +131,10 @@ export async function POST(request: Request) {
       documents,
     );
 
-    // Non-blocking ping to the Admin Portal for instant Google Sheets sync
+    // Ping to the Admin Portal for instant Google Sheets sync
     if (process.env.ADMIN_PORTAL_URL && process.env.CRON_SECRET) {
-      // We do not await this to avoid slowing down the user's response time
-      fetch(`${process.env.ADMIN_PORTAL_URL}/api/webhook/sync-registration`, {
+      // VERCEL FIX: We MUST await this fetch request. If we don't, Vercel instantly kills the serverless function before the fetch finishes.
+      await fetch(`${process.env.ADMIN_PORTAL_URL}/api/webhook/sync-registration`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
