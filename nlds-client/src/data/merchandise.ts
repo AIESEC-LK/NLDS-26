@@ -33,7 +33,7 @@ export const PRODUCTS: Product[] = [
     shortDescription:
       "Complete operative kit — T-Shirt, wrist band, & stickers.",
     price: 5500,
-    fitPrices: { Oversized: 2200, Regular: 1900 },
+    fitPrices: { Oversized: 2500, Regular: 2200 },
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789236358/12_fpvwli.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789236360/13_a2jzmb.png"
     ],
@@ -67,9 +67,8 @@ export const PRODUCTS: Product[] = [
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     fitTypes: ["Oversized", "Regular"],
-    available: false,
+    available: true,
     itemCode: "NLDS26-002",
-    badge: "COMING SOON",
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
@@ -85,9 +84,8 @@ export const PRODUCTS: Product[] = [
     price: 350,
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217450/1_imggci.png"],
     sizes: [], // no size selector needed
-    available: false,
+    available: true,
     itemCode: "NLDS26-003",
-    badge: "COMING SOON",
   },
   {
     id: "stickers-001",
@@ -101,9 +99,8 @@ export const PRODUCTS: Product[] = [
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217451/5_hokdcw.png"
     ],
     sizes: [], // no size selector needed
-    available: false,
+    available: true,
     itemCode: "NLDS26-004",
-    badge: "COMING SOON",
   },
   {
     id: "bucket-hat-001",
@@ -116,9 +113,8 @@ export const PRODUCTS: Product[] = [
     price: 500,
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217439/7_px5vlk.png"],
     sizes: [], // one size fits most
-    available: false,
+    available: true,
     itemCode: "NLDS26-005",
-    badge: "COMING SOON",
   },
 ];
 
