@@ -6,6 +6,7 @@ import { RegistrationRepository } from "@/lib/backend/repositories/registration.
 import { ServerRegistrationSchema } from "@/lib/backend/validation/registration.schema";
 import { syncService } from "@/lib/backend/events/sync.service";
 import { verifyTurnstileToken } from "@/lib/captcha";
+import { google } from "googleapis";
 
 export const maxDuration = 60;
 
@@ -130,6 +131,66 @@ export async function POST(request: Request) {
       registrationData,
       documents,
     );
+
+    // DIRECT MASTER SHEET SYNC (Frontend Responsibility)
+    try {
+      console.log(`[LIVE SYNC] Pushing registration ${registration.referenceCode} directly to Master Sheet...`);
+      const clientEmail = process.env.GOOGLE_CLIENT_EMAIL?.trim();
+      const privateKeyRaw = process.env.GOOGLE_PRIVATE_KEY || '';
+      const privateKey = privateKeyRaw.replace(/\\n/g, '\n');
+      const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID?.trim();
+
+      if (clientEmail && privateKey && spreadsheetId) {
+        const auth = new google.auth.GoogleAuth({
+          credentials: { client_email: clientEmail, private_key: privateKey },
+          scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        });
+        const sheets = google.sheets({ version: 'v4', auth: auth as any });
+
+        const cvDoc = documents.find((d) => d.type === 'CV');
+        
+        const rowToAppend = [
+          registration.referenceCode,
+          new Date().toISOString(),
+          data.fullName,
+          data.preferredName,
+          data.gender,
+          data.dateOfBirth,
+          data.nationalIdOrPassport,
+          data.phone,
+          data.personalEmail,
+          data.aiesecEmail || '',
+          resolvedEntity?.name || '',
+          resolvedIg?.name || '',
+          data.customInitiativeGroup || '',
+          data.currentPosition || '',
+          data.foodPreference || '',
+          data.medicalConditions || '',
+          data.guardianName || '',
+          data.guardianContact || '',
+          data.missionGoal || '',
+          data.additionalInformation || '',
+          data.readinessLevel || '',
+          cvDoc?.urlReference || '[NO CV]',
+          cvDoc?.consentGiven ? 'YES' : 'NO',
+          data.profilePicture || '[N/A]',
+          'SUBMITTED' // Default Status
+        ];
+
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: spreadsheetId,
+          range: "'Registration'!A:Z",
+          valueInputOption: 'USER_ENTERED',
+          insertDataOption: 'INSERT_ROWS',
+          requestBody: { values: [rowToAppend] }
+        });
+        console.log(`[LIVE SYNC] Successfully appended to Master Sheet.`);
+      } else {
+        console.warn(`[LIVE SYNC] Missing Google credentials. Master Sheet sync skipped.`);
+      }
+    } catch (error) {
+      console.error("[LIVE SYNC] Failed to directly append to Master Sheet:", error);
+    }
 
     // Ping to the Admin Portal for instant Google Sheets sync
     if (process.env.ADMIN_PORTAL_URL && process.env.CRON_SECRET) {
