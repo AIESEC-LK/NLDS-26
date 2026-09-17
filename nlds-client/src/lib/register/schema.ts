@@ -69,17 +69,12 @@ export const aiesecIntelSchema = z
       .min(1, "Please select your current AIESEC position"),
   })
   .superRefine((data, ctx) => {
-    const { entity, initiativeGroup, participantType, aiesecEmail } = data;
+    const { entity, initiativeGroup, aiesecEmail } = data;
     let allowedIgs: readonly string[] = [];
 
-    if (participantType === "OLDBIE") {
-      if (!aiesecEmail || aiesecEmail.trim() === "") {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "AIESEC email is required for Oldbies.",
-          path: ["aiesecEmail"],
-        });
-      } else if (
+    // Validate format only if an email is provided (optional for both Newbies and Oldbies)
+    if (aiesecEmail && aiesecEmail.trim() !== "") {
+      if (
         !aiesecEmail.includes("@") ||
         !aiesecEmail.toLowerCase().endsWith("@aiesec.net")
       ) {
@@ -89,16 +84,6 @@ export const aiesecIntelSchema = z
             "Please enter a valid AIESEC email address ending with @aiesec.net.",
           path: ["aiesecEmail"],
         });
-      }
-    } else if (participantType === "NEWBIE") {
-      if (aiesecEmail && aiesecEmail.trim() !== "") {
-        if (!aiesecEmail.includes("@")) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Please enter a valid email address.",
-            path: ["aiesecEmail"],
-          });
-        }
       }
     }
 

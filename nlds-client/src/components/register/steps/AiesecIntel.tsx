@@ -188,8 +188,6 @@ export default function AiesecIntel() {
             label="Agent, provide your secure channel of communication with the mission team. (AIESEC email)"
             type="email"
             placeholder="Enter your AIESEC email (name@aiesec.net)"
-            required={true}
-            extraLabel="Required for Oldbies"
             error={e?.aiesecEmail}
             {...register("aiesecIntel.aiesecEmail")}
           />
