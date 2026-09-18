@@ -37,7 +37,7 @@ export const PRODUCTS: Product[] = [
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789236358/12_fpvwli.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789236360/13_a2jzmb.png"
     ],
-    sizes: ["XS", "S", "M", "L", "XL"],
+    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     fitTypes: ["Oversized", "Regular"],
     available: true,
     itemCode: "NLDS26-001",
@@ -65,7 +65,7 @@ export const PRODUCTS: Product[] = [
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217451/10_tmstxj.png",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1789217454/11_qtbxql.png",
     ],
-    sizes: ["XS", "S", "M", "L", "XL"],
+    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     fitTypes: ["Oversized", "Regular"],
     available: true,
     itemCode: "NLDS26-002",

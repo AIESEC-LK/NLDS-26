@@ -237,7 +237,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     forcedIndex={
                       requiresFit && selectedFit
                         ? selectedFit.toLowerCase() === "oversized"
-                          ? 0
+                          ? 4
                           : 1
                         : undefined
                     }
@@ -257,7 +257,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     forcedIndex={
                       requiresFit && selectedFit
                         ? selectedFit.toLowerCase() === "oversized"
-                          ? 0
+                          ? 4
                           : 1
                         : undefined
                     }
