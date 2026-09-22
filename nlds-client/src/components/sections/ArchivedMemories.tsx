@@ -80,7 +80,7 @@ const MEMORIES: MemoryCard[] = [
       "https://res.cloudinary.com/daamlqcer/image/upload/v1787585799/571448603_1230049729169750_7279052457716443494_n_zrkgc7.jpg",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1787585796/571343355_1230060149168708_5640428504050073784_n_tueotu.jpg",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1787585791/570115345_1230055212502535_6374022892192885500_n_bfbofq.jpg",
-      "https://res.cloudinary.com/daamlqcer/image/upload/v1787585800/571791147_1230049345836455_7423746920045761569_n_mpqwfq.jpg",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1790090444/571230527_1230047985836591_1872667235688214022_n_chhir9.jpg",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1787585792/571231448_1230048152503241_1678166474363396444_n_afnzjd.jpg",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1787585792/571134186_1230047842503272_4615556096503260860_n_azin0m.jpg",
       "https://res.cloudinary.com/daamlqcer/image/upload/v1787585794/571134314_1230060489168674_7994456661734102270_n_fwlgwj.jpg",
