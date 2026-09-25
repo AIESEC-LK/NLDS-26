@@ -231,7 +231,7 @@ export const organizingCommittee: TeamMember[] = [
     role: "OC Vice President — Logistics",
     committee: "OC",
     image:
-      "https://res.cloudinary.com/daamlqcer/image/upload/v1787579439/Vidath_Amunugama_-_LOG_t48lgb.jpg",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1790322696/IMG_2392_dd7njr.jpg",
   },
   {
     id: "oc-vp-logistics-4",
@@ -265,6 +265,6 @@ export const organizingCommittee: TeamMember[] = [
     role: "OC Vice President — Marketing",
     committee: "OC",
     image:
-      "https://res.cloudinary.com/daamlqcer/image/upload/v1787579439/Tharinda_Dinujaya-_MKT_yhcq7v.jpg",
+      "https://res.cloudinary.com/daamlqcer/image/upload/v1790322729/IMG_2367_pj7dv5.jpg",
   },
 ];
