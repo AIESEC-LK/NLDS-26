@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Menu, Lock } from "lucide-react";
 import CartBadge from "@/components/store/CartBadge";
+import { useClosingStatus } from "@/components/ui/Countdown";
 
 interface NavLink {
   label: string;
@@ -36,6 +37,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const isStorePage = pathname?.startsWith("/store");
+  const { isClosed, mounted } = useClosingStatus();
 
   // Close mobile menu on Escape
   useEffect(() => {
@@ -155,14 +157,25 @@ export default function Navbar() {
 
           {/* ── Desktop CTA ──── */}
           <div className="hidden lg:block flex-shrink-0">
-            <Link
-              href="/register"
-              className="btn-mission"
-              style={{ padding: "12px 24px" }}
-              id="nav-cta"
-            >
-              ACCEPT THE MISSION →
-            </Link>
+            {!mounted || !isClosed ? (
+              <Link
+                href="/register"
+                className="btn-mission"
+                style={{ padding: "12px 24px" }}
+                id="nav-cta"
+              >
+                ACCEPT THE MISSION →
+              </Link>
+            ) : (
+              <button
+                className="btn-mission opacity-50 cursor-not-allowed"
+                style={{ padding: "12px 24px" }}
+                id="nav-cta"
+                disabled
+              >
+                REGISTRATION CLOSED
+              </button>
+            )}
           </div>
 
           {/* ── Mobile hamburger ─── */}
@@ -276,15 +289,26 @@ export default function Navbar() {
                   className="pt-6 pb-2 mt-2"
                   style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
                 >
-                  <Link
-                    href="/register"
-                    onClick={() => setMenuOpen(false)}
-                    className="btn-mission w-full justify-center"
-                    style={{ display: "flex" }}
-                    id="mobile-cta"
-                  >
-                    ACCEPT THE MISSION →
-                  </Link>
+                  {!mounted || !isClosed ? (
+                    <Link
+                      href="/register"
+                      onClick={() => setMenuOpen(false)}
+                      className="btn-mission w-full justify-center"
+                      style={{ display: "flex" }}
+                      id="mobile-cta"
+                    >
+                      ACCEPT THE MISSION →
+                    </Link>
+                  ) : (
+                    <button
+                      className="btn-mission w-full justify-center opacity-50 cursor-not-allowed"
+                      style={{ display: "flex" }}
+                      id="mobile-cta"
+                      disabled
+                    >
+                      REGISTRATION CLOSED
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>

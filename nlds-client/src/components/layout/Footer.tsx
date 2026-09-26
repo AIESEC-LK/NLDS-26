@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { Lock } from "lucide-react";
+import { useClosingStatus } from "@/components/ui/Countdown";
 
 const FOOTER_LINKS = [
   { label: "HOME", href: "/" },
@@ -24,6 +25,8 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
+  const { isClosed, mounted } = useClosingStatus();
+
   return (
     <footer
       id="footer"
@@ -195,37 +198,42 @@ export default function Footer() {
                   gap: "0.85rem",
                 }}
               >
-                {FOOTER_LINKS.map((link) => (
-                  <li key={link.label}>
-                    {link.locked ? (
-                      <div
-                        title="Opens on event day"
-                        className="font-classified flex items-center gap-2 cursor-not-allowed select-none"
-                        style={{
-                          fontSize: "12px",
-                          letterSpacing: "0.22em",
-                          color: "rgba(255,255,255,0.4)",
-                        }}
-                      >
-                        <Lock size={12} className="flex-shrink-0" />
-                        <span>{link.label}</span>
-                      </div>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className="font-classified hover:text-[var(--red)] transition-colors duration-200"
-                        style={{
-                          fontSize: "12px",
-                          letterSpacing: "0.22em",
-                          color: "var(--text)",
-                          textDecoration: "none",
-                        }}
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
+                {FOOTER_LINKS.map((link) => {
+                  const isLocked = link.locked || (link.label === "REGISTER" && mounted && isClosed);
+                  const displayLabel = link.label === "REGISTER" && mounted && isClosed ? "REGISTRATION CLOSED" : link.label;
+
+                  return (
+                    <li key={link.label}>
+                      {isLocked ? (
+                        <div
+                          title={link.label === "REGISTER" ? "Registration has ended" : "Opens on event day"}
+                          className="font-classified flex items-center gap-2 cursor-not-allowed select-none"
+                          style={{
+                            fontSize: "12px",
+                            letterSpacing: "0.22em",
+                            color: "rgba(255,255,255,0.4)",
+                          }}
+                        >
+                          <Lock size={12} className="flex-shrink-0" />
+                          <span>{displayLabel}</span>
+                        </div>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="font-classified hover:text-[var(--red)] transition-colors duration-200"
+                          style={{
+                            fontSize: "12px",
+                            letterSpacing: "0.22em",
+                            color: "var(--text)",
+                            textDecoration: "none",
+                          }}
+                        >
+                          {displayLabel}
+                        </Link>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
