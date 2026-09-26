@@ -8,6 +8,8 @@ import { render } from "@react-email/render";
 import { env } from "@/lib/config/env";
 import { prisma } from "@/lib/backend/db/prisma";
 import { verifyTurnstileToken } from "@/lib/captcha";
+import { CLOSING_DEADLINE } from "@/lib/constants";
+import { getTimeRemaining } from "@/lib/utils";
 
 export const maxDuration = 60;
 
@@ -51,6 +53,16 @@ interface IncomingOrderItem {
 
 export async function POST(request: Request) {
   try {
+    const timeLeft = getTimeRemaining(CLOSING_DEADLINE);
+    const isClosed = timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0;
+    
+    if (isClosed) {
+      return NextResponse.json(
+        { error: "ORDERS CLOSED: The deadline has passed." },
+        { status: 403 }
+      );
+    }
+
     const formData = await request.formData();
 
     const fullName = (formData.get("fullName") as string)?.trim();

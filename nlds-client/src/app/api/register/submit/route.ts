@@ -7,6 +7,8 @@ import { ServerRegistrationSchema } from "@/lib/backend/validation/registration.
 import { syncService } from "@/lib/backend/events/sync.service";
 import { verifyTurnstileToken } from "@/lib/captcha";
 import { google } from "googleapis";
+import { CLOSING_DEADLINE } from "@/lib/constants";
+import { getTimeRemaining } from "@/lib/utils";
 
 export const maxDuration = 60;
 
@@ -15,6 +17,16 @@ const service = new RegistrationService(repo);
 
 export async function POST(request: Request) {
   try {
+    const timeLeft = getTimeRemaining(CLOSING_DEADLINE);
+    const isClosed = timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0;
+    
+    if (isClosed) {
+      return NextResponse.json(
+        { error: "REGISTRATION CLOSED: The deadline has passed and the mission is locked." },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
 
     const turnstileToken = body.turnstileToken;
