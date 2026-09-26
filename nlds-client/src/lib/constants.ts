@@ -11,6 +11,7 @@ export const EVENT_YEAR = 2026;
 /** ISO date strings — update when finalized */
 export const EVENT_START_DATE = "2026-10-01T08:00:00+05:30";
 export const EVENT_END_DATE = "2026-10-03T20:00:00+05:30";
+export const CLOSING_DEADLINE = "2026-09-26T23:59:59+05:30"; // Shared closing time
 
 export const AIESEC_SL_URL = "https://www.aiesec.lk";
 

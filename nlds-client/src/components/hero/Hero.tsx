@@ -8,6 +8,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import ClosingCountdown, { useClosingStatus } from "@/components/ui/Countdown";
 
 type Phase = 0 | 1 | 2 | 3 | 4;
 
@@ -26,6 +27,7 @@ export default function Hero() {
   const [phase, setPhase] = useState<Phase>(0);
   const [scanPct, setScanPct] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
+  const { isClosed, mounted } = useClosingStatus();
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -289,6 +291,19 @@ export default function Hero() {
               />
             </motion.div>
 
+            {/* Countdown */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0 }}
+              className="mt-4 mb-2"
+            >
+              <ClosingCountdown 
+                labelBefore="REGISTRATION CLOSES IN"
+                labelAfter="REGISTRATION CLOSED"
+              />
+            </motion.div>
+
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
@@ -296,9 +311,15 @@ export default function Hero() {
               transition={{ delay: 1.1 }}
               className="flex flex-col sm:flex-row items-center gap-4 mt-0 pt-0"
             >
-              <Link href="/register" className="btn-mission" id="hero-cta">
-                ACCEPT THE MISSION →
-              </Link>
+              {!mounted || !isClosed ? (
+                <Link href="/register" className="btn-mission" id="hero-cta">
+                  ACCEPT THE MISSION →
+                </Link>
+              ) : (
+                <button className="btn-mission opacity-50 cursor-not-allowed" id="hero-cta" disabled>
+                  REGISTRATION CLOSED
+                </button>
+              )}
               <button
                 className="btn-ghost"
                 onClick={() => {

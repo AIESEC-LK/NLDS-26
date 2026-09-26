@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
+import ClosingCountdown from "@/components/ui/Countdown";
 
 export default function StoreFront() {
   const ref = useRef<HTMLElement>(null);
@@ -135,6 +136,20 @@ export default function StoreFront() {
               your order. All items are delivered during registration at
               NLDS&apos;26.
             </p>
+
+            {/* Countdown */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.1, duration: 0.6 }}
+              className="mb-8"
+            >
+              <ClosingCountdown 
+                title={<span className="font-classified text-[11px] tracking-[0.2em] text-[var(--red)] uppercase">FINAL CALL<br/>MERGE &apos;26</span>}
+                labelBefore="ORDERS CLOSE IN"
+                labelAfter="ORDERS CLOSED"
+              />
+            </motion.div>
 
             {/* Centered tactical metadata row */}
             <div

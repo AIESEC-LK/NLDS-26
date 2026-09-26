@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import type { Product } from "@/data/merchandise";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useClosingStatus } from "@/components/ui/Countdown";
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +19,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
+  const { isClosed } = useClosingStatus();
 
   // Auto-play carousel
   useEffect(() => {
@@ -309,12 +311,14 @@ export default function ProductCard({
                 style={{
                   fontSize: "9px",
                   letterSpacing: "0.22em",
-                  color: product.available
-                    ? "var(--red)"
-                    : "rgba(255,255,255,0.45)",
+                  color: isClosed 
+                    ? "var(--red)" 
+                    : product.available
+                      ? "var(--red)"
+                      : "rgba(255,255,255,0.45)",
                 }}
               >
-                {product.available ? "● AVAILABLE" : "○ COMING SOON"}
+                {isClosed ? "● ORDERS CLOSED" : product.available ? "● AVAILABLE" : "○ COMING SOON"}
               </span>
             </div>
 
@@ -385,20 +389,20 @@ export default function ProductCard({
             {/* CTA button */}
             <div
               className={`flex items-center justify-center gap-2 px-4 py-[15px] mt-1 transition-all ${
-                product.available
+                !isClosed && product.available
                   ? "bg-[var(--red)] text-white hover:bg-[var(--red-hover,rgb(220,38,38))]"
                   : "bg-white/5 text-white/50 border border-white/10 group-hover:border-[var(--red)] group-hover:text-white/80"
               }`}
               style={{
-                border: product.available ? "none" : undefined,
+                border: (!isClosed && product.available) ? "none" : undefined,
               }}
             >
               <span className="font-classified font-semibold text-[11px] tracking-[0.2em]">
-                {product.available ? "VIEW ITEM SPECIFICATIONS" : "COMING SOON — PREVIEW"}
+                {isClosed ? "ORDERS CLOSED — PREVIEW" : product.available ? "VIEW ITEM SPECIFICATIONS" : "COMING SOON — PREVIEW"}
               </span>
               <ArrowRight
                 size={14}
-                className={`transition-transform ${product.available ? "group-hover:translate-x-1" : ""}`}
+                className={`transition-transform ${(!isClosed && product.available) ? "group-hover:translate-x-1" : ""}`}
               />
             </div>
           </div>

@@ -11,6 +11,7 @@ import type { Product } from "@/data/merchandise";
 import { X, ShoppingBag, ArrowRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import FitSelector from "@/components/store/FitSelector";
+import { useClosingStatus } from "@/components/ui/Countdown";
 
 interface ProductModalProps {
   product: Product | null;
@@ -27,6 +28,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   const [sizeError, setSizeError] = useState(false);
   const [fitError, setFitError] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { isClosed } = useClosingStatus();
 
   useEffect(() => {
     setMounted(true);
@@ -506,7 +508,36 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
                   {/* Desktop-only inline actions (hidden on mobile — shown in sticky footer instead) */}
                   <div className="hidden md:flex flex-col gap-1.5 w-full mt-auto pt-2">
-                    {!product.available ? (
+                    {isClosed ? (
+                      <div
+                        className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
+                        style={{
+                          background: "rgba(196, 30, 58, 0.08)",
+                          border: "1px dashed rgba(196, 30, 58, 0.4)",
+                        }}
+                      >
+                        <span
+                          className="font-classified"
+                          style={{
+                            fontSize: "9.5px",
+                            letterSpacing: "0.2em",
+                            color: "var(--red)",
+                          }}
+                        >
+                          MERGE &apos;26 // ORDERS CLOSED
+                        </span>
+                        <span
+                          className="font-classified mt-0.5"
+                          style={{
+                            fontSize: "7.5px",
+                            letterSpacing: "0.12em",
+                            color: "rgba(255, 255, 255, 0.5)",
+                          }}
+                        >
+                          THE ORDERING WINDOW HAS OFFICIALLY ENDED
+                        </span>
+                      </div>
+                    ) : !product.available ? (
                       <div
                         className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
                         style={{
@@ -598,7 +629,36 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   backdropFilter: "blur(12px)",
                 }}
               >
-                {!product.available ? (
+                {isClosed ? (
+                  <div
+                    className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
+                    style={{
+                      background: "rgba(196, 30, 58, 0.08)",
+                      border: "1px dashed rgba(196, 30, 58, 0.4)",
+                    }}
+                  >
+                    <span
+                      className="font-classified"
+                      style={{
+                        fontSize: "9.5px",
+                        letterSpacing: "0.2em",
+                        color: "var(--red)",
+                      }}
+                    >
+                      MERGE &apos;26 // ORDERS CLOSED
+                    </span>
+                    <span
+                      className="font-classified mt-0.5"
+                      style={{
+                        fontSize: "7.5px",
+                        letterSpacing: "0.12em",
+                        color: "rgba(255, 255, 255, 0.5)",
+                      }}
+                    >
+                      THE ORDERING WINDOW HAS OFFICIALLY ENDED
+                    </span>
+                  </div>
+                ) : !product.available ? (
                   <div
                     className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
                     style={{
