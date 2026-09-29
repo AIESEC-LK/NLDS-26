@@ -58,7 +58,7 @@ export const FLASH_ROUND_START = "2026-10-01T18:00:00+05:30";
  *
  * Currently set to match the example above.
  */
-export const FLASH_ROUND_END = "2026-10-04T00:00:00+05:30";
+export const FLASH_ROUND_END = "2026-10-01T23:59:59+05:30";
 
 // ─── Flash Round State ────────────────────────────────────────────────────────
 
