@@ -300,8 +300,8 @@ export default function Hero() {
               className="mt-4 mb-2"
             >
               <ClosingCountdown 
-                labelBefore="REGISTRATION CLOSES IN"
-                labelAfter="REGISTRATION CLOSED"
+                labelBefore="REGISTRATION FLASH ROUND CLOSES IN"
+                labelAfter="REGISTRATION FLASH ROUND CLOSED"
               />
             </motion.div>
 

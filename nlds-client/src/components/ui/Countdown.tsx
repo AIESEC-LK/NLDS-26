@@ -97,7 +97,7 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
               textShadow: "0 0 12px rgba(196,30,58,0.6)"
             }}
           >
-            REGISTRATION COMING SOON
+            REGISTRATION FLASH ROUND COMING SOON
           </span>
           <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(270deg, transparent, rgba(196,30,58,0.5))" }} />
         </div>

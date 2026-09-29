@@ -112,7 +112,7 @@ export default function RegistrationComingSoon() {
             className="font-classified uppercase tracking-[0.32em]"
             style={{ fontSize: "9px", color: "var(--red)" }}
           >
-            REGISTRATION STATUS
+            REGISTRATION FLASH ROUND STATUS
           </span>
           <div className="h-px w-8" style={{ background: "var(--red)" }} />
         </motion.div>
@@ -186,7 +186,7 @@ export default function RegistrationComingSoon() {
               fontWeight: 300,
             }}
           >
-            Registrations for NLDS&apos;26 are not yet open.
+            The Registration Flash Round for NLDS&apos;26 is not yet open.
             <br />
             Stay tuned — your mission briefing is incoming.
           </p>
