@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CLOSING_DEADLINE } from "@/lib/constants";
+import { CLOSING_DEADLINE, REGISTRATION_OPEN } from "@/lib/constants";
 import { getTimeRemaining } from "@/lib/utils";
 
 export function useClosingStatus() {
@@ -83,6 +83,27 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
 
   // Show nothing until mounted to avoid hydration errors
   if (!mounted) return null;
+
+  if (!REGISTRATION_OPEN) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 mt-4 mb-2 w-full max-w-[400px] mx-auto">
+        {title && <div className="text-center mb-1">{title}</div>}
+        <div className="flex items-center justify-center gap-3 sm:gap-4 w-full">
+          <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(90deg, transparent, rgba(196,30,58,0.5))" }} />
+          <span 
+            className="font-classified text-[12px] sm:text-[14px] tracking-[0.25em] uppercase text-center font-bold"
+            style={{
+              color: "var(--red)",
+              textShadow: "0 0 12px rgba(196,30,58,0.6)"
+            }}
+          >
+            REGISTRATION COMING SOON
+          </span>
+          <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(270deg, transparent, rgba(196,30,58,0.5))" }} />
+        </div>
+      </div>
+    );
+  }
 
   if (isClosed) {
     return (
