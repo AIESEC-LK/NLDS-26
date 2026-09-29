@@ -17,7 +17,7 @@ export const CLOSING_DEADLINE = "2026-10-01T23:59:59+05:30"; // Shared closing t
  * Set to true to open registrations (show the form).
  * Set to false to show the Coming Soon screen.
  */
-export const REGISTRATION_OPEN = false;
+export const REGISTRATION_OPEN = true;
 
 
 export const AIESEC_SL_URL = "https://www.aiesec.lk";
