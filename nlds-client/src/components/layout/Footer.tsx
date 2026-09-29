@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { Lock } from "lucide-react";
 import { useClosingStatus } from "@/components/ui/Countdown";
+import { REGISTRATION_OPEN } from "@/lib/constants";
 
 const FOOTER_LINKS = [
   { label: "HOME", href: "/" },
@@ -199,14 +200,18 @@ export default function Footer() {
                 }}
               >
                 {FOOTER_LINKS.map((link) => {
-                  const isLocked = link.locked || (link.label === "REGISTER" && mounted && isClosed);
-                  const displayLabel = link.label === "REGISTER" && mounted && isClosed ? "REGISTRATION CLOSED" : link.label;
+                  const isLocked = link.locked || (link.label === "REGISTER" && mounted && (isClosed || !REGISTRATION_OPEN));
+                  const displayLabel = link.label === "REGISTER" && mounted && isClosed 
+                    ? "REGISTRATION CLOSED" 
+                    : link.label === "REGISTER" && mounted && !REGISTRATION_OPEN
+                    ? "REGISTRATIONS CLOSED"
+                    : link.label;
 
                   return (
                     <li key={link.label}>
                       {isLocked ? (
                         <div
-                          title={link.label === "REGISTER" ? "Registration has ended" : "Opens on event day"}
+                          title={link.label === "REGISTER" && !REGISTRATION_OPEN ? "Coming Soon" : link.label === "REGISTER" ? "Registration has ended" : "Opens on event day"}
                           className="font-classified flex items-center gap-2 cursor-not-allowed select-none"
                           style={{
                             fontSize: "12px",
