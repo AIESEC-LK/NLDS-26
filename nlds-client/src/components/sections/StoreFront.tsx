@@ -4,7 +4,8 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
-import ClosingCountdown from "@/components/ui/Countdown";
+
+import FlashRoundBanner from "@/components/store/FlashRoundBanner";
 
 export default function StoreFront() {
   const ref = useRef<HTMLElement>(null);
@@ -137,87 +138,11 @@ export default function StoreFront() {
               NLDS&apos;26.
             </p>
 
-            {/* Countdown */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.1, duration: 0.6 }}
-              className="mb-8"
-            >
-              <ClosingCountdown 
-                title={<span className="font-classified text-[11px] tracking-[0.2em] text-[var(--red)] uppercase">FINAL CALL<br/>MERGE &apos;26</span>}
-                labelBefore="ORDERS CLOSE IN"
-                labelAfter="ORDERS CLOSED"
-              />
-            </motion.div>
 
-            {/* Centered tactical metadata row */}
-            <div
-              className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 py-3 px-6 max-w-2xl w-full"
-              style={{
-                borderTop: "1px solid rgba(255,255,255,0.06)",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-                background: "rgba(255,255,255,0.015)",
-              }}
-            >
-              {[
-                ["OPERATION", "NLDS'26"],
-                ["CLASSIFICATION", "OFFICIAL ISSUE"],
-                ["STATUS", "INVENTORY ACTIVE"],
-              ].map(([key, val], idx) => (
-                <div key={key} className="flex items-center gap-2">
-                  {idx > 0 && (
-                    <span
-                      className="hidden sm:inline-block"
-                      style={{
-                        width: 3,
-                        height: 3,
-                        borderRadius: "50%",
-                        background: "rgba(255,255,255,0.15)",
-                        marginRight: "0.75rem",
-                      }}
-                    />
-                  )}
-                  <span
-                    className="font-classified"
-                    style={{
-                      fontSize: "9.5px",
-                      letterSpacing: "0.22em",
-                      color: "var(--text-ghost)",
-                    }}
-                  >
-                    {key}:
-                  </span>
-                  <span
-                    className="font-classified"
-                    style={{
-                      fontSize: "9.5px",
-                      letterSpacing: "0.18em",
-                      color:
-                        val === "INVENTORY ACTIVE"
-                          ? "var(--red)"
-                          : "var(--text-muted)",
-                    }}
-                  >
-                    {val === "INVENTORY ACTIVE" ? `● ${val}` : val}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Subtle centered accent divider */}
-            <div
-              style={{
-                width: "140px",
-                height: "1px",
-                background:
-                  "linear-gradient(90deg, transparent, var(--red), transparent)",
-                opacity: 0.6,
-                marginTop: "2.5rem",
-                marginBottom: "1rem",
-              }}
-            />
           </motion.div>
+
+          {/* ── Flash Round Banner ─────────────────────── */}
+          <FlashRoundBanner />
 
           {/* ── Product Grid ───────────────────── */}
           <motion.div

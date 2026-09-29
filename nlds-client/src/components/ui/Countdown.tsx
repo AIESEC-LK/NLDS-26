@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CLOSING_DEADLINE } from "@/lib/constants";
+import { CLOSING_DEADLINE, REGISTRATION_OPEN } from "@/lib/constants";
 import { getTimeRemaining } from "@/lib/utils";
 
 export function useClosingStatus() {
@@ -25,49 +25,72 @@ export function useClosingStatus() {
   return { timeLeft, isClosed, mounted };
 }
 
-function DigitBlock({ value, label }: { value: string; label: string }) {
+const R = "#C41E3A";
+const RD = "rgba(196,30,58,0.5)";
+
+function Digit({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-      <div 
-        className="relative flex items-center justify-center w-[52px] h-[60px] sm:w-[68px] sm:h-[80px]"
+    <div className="flex flex-col items-center" style={{ gap: "8px" }}>
+      {/* Card */}
+      <div
+        className="relative flex items-center justify-center overflow-hidden"
         style={{
-          background: "rgba(10,10,12,0.6)",
-          border: "1px solid rgba(196,30,58,0.2)",
-          boxShadow: "0 0 15px rgba(196,30,58,0.1), inset 0 0 15px rgba(196,30,58,0.05)",
-          backdropFilter: "blur(6px)",
+          width: "clamp(62px, 10vw, 88px)",
+          height: "clamp(70px, 11vw, 96px)",
+          background: "rgba(196,30,58,0.09)",
+          border: `1px solid ${RD}`,
+          boxShadow: `0 0 24px rgba(196,30,58,0.18), inset 0 0 18px rgba(196,30,58,0.06)`,
         }}
       >
-        <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-[var(--red)] opacity-80" />
-        <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-[var(--red)] opacity-80" />
-        <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-[var(--red)] opacity-80" />
-        <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-[var(--red)] opacity-80" />
-        
-        {/* Subtle scanline overlay inside digit box */}
-        <div 
-          className="pointer-events-none absolute inset-0 z-10 opacity-[0.08]"
+        {/* Corner marks */}
+        <span className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2" style={{ borderColor: R }} />
+        <span className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2" style={{ borderColor: R }} />
+        <span className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2" style={{ borderColor: R }} />
+        <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2" style={{ borderColor: R }} />
+
+        {/* Scanlines */}
+        <span
+          className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(196,30,58,1) 2px, rgba(196,30,58,1) 4px)",
+            backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(196,30,58,0.04) 3px,rgba(196,30,58,0.04) 4px)",
           }}
         />
 
-        <span 
-          className="font-display text-2xl sm:text-4xl tabular-nums relative z-20"
+        {/* Number */}
+        <span
+          className="font-display tabular-nums relative z-10 select-none"
           style={{
-            color: "var(--red)",
-            textShadow: "0 0 12px rgba(196,30,58,0.5)",
+            fontSize: "clamp(2.1rem, 5vw, 3.2rem)",
             lineHeight: 1,
-            marginTop: "4px" // optical adjustment for font
+            color: R,
+            textShadow: `0 0 22px ${RD}, 0 0 50px rgba(196,30,58,0.2)`,
+            marginTop: "5px",
+            letterSpacing: "-0.02em",
           }}
         >
           {value}
         </span>
       </div>
-      <span 
-        className="font-classified text-[8px] sm:text-[9px] tracking-[0.25em] text-[var(--red)] uppercase"
-        style={{ opacity: 0.8 }}
+
+      <span
+        className="font-classified select-none uppercase"
+        style={{
+          fontSize: "7.5px",
+          letterSpacing: "0.32em",
+          color: "rgba(196,30,58,0.7)",
+        }}
       >
         {label}
       </span>
+    </div>
+  );
+}
+
+function Sep() {
+  return (
+    <div className="flex flex-col gap-2" style={{ paddingBottom: "28px", opacity: 0.9 }}>
+      <span className="w-[5px] h-[5px] rounded-full block" style={{ background: R, boxShadow: `0 0 8px ${RD}` }} />
+      <span className="w-[5px] h-[5px] rounded-full block" style={{ background: R, boxShadow: `0 0 8px ${RD}` }} />
     </div>
   );
 }
@@ -84,6 +107,27 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
   // Show nothing until mounted to avoid hydration errors
   if (!mounted) return null;
 
+  if (!REGISTRATION_OPEN) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 mt-4 mb-2 w-full max-w-[400px] mx-auto">
+        {title && <div className="text-center mb-1">{title}</div>}
+        <div className="flex items-center justify-center gap-3 sm:gap-4 w-full">
+          <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(90deg, transparent, rgba(196,30,58,0.5))" }} />
+          <span 
+            className="font-classified text-[12px] sm:text-[14px] tracking-[0.25em] uppercase text-center font-bold"
+            style={{
+              color: "var(--red)",
+              textShadow: "0 0 12px rgba(196,30,58,0.6)"
+            }}
+          >
+            REGISTRATION FLASH ROUND COMING SOON
+          </span>
+          <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(270deg, transparent, rgba(196,30,58,0.5))" }} />
+        </div>
+      </div>
+    );
+  }
+
   if (isClosed) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 mt-4 mb-2">
@@ -95,13 +139,14 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
     );
   }
 
-  const hours = String(timeLeft.days * 24 + timeLeft.hours).padStart(2, "0");
-  const minutes = String(timeLeft.minutes).padStart(2, "0");
-  const seconds = String(timeLeft.seconds).padStart(2, "0");
+  const dd = String(timeLeft.days).padStart(2, "0");
+  const hh = String(timeLeft.hours).padStart(2, "0");
+  const mm = String(timeLeft.minutes).padStart(2, "0");
+  const ss = String(timeLeft.seconds).padStart(2, "0");
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 mt-3 mb-5 w-full max-w-[400px] mx-auto">
-      {title && <div className="text-center mb-1">{title}</div>}
+    <div className="flex flex-col items-center justify-center gap-4 sm:gap-5 mt-4 mb-6 w-full mx-auto">
+      {title && <div className="text-center">{title}</div>}
       
       {/* Tactical Label Row */}
       <div className="flex items-center justify-center gap-3 sm:gap-4 w-full">
@@ -119,22 +164,14 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
       </div>
 
       {/* Digits Display */}
-      <div className="flex items-center justify-center gap-2 sm:gap-4">
-        <DigitBlock value={hours} label="HRS" />
-        
-        <div className="flex flex-col gap-1.5 sm:gap-2 pb-5 sm:pb-6">
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[var(--red)] opacity-60" style={{ boxShadow: "0 0 8px rgba(196,30,58,0.6)" }} />
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[var(--red)] opacity-60" style={{ boxShadow: "0 0 8px rgba(196,30,58,0.6)" }} />
-        </div>
-        
-        <DigitBlock value={minutes} label="MIN" />
-        
-        <div className="flex flex-col gap-1.5 sm:gap-2 pb-5 sm:pb-6">
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[var(--red)] opacity-60" style={{ boxShadow: "0 0 8px rgba(196,30,58,0.6)" }} />
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[var(--red)] opacity-60" style={{ boxShadow: "0 0 8px rgba(196,30,58,0.6)" }} />
-        </div>
-        
-        <DigitBlock value={seconds} label="SEC" />
+      <div className="flex items-center justify-center gap-2 sm:gap-3 w-full">
+        <Digit value={dd} label="DAYS" />
+        <Sep />
+        <Digit value={hh} label="HRS" />
+        <Sep />
+        <Digit value={mm} label="MIN" />
+        <Sep />
+        <Digit value={ss} label="SEC" />
       </div>
     </div>
   );

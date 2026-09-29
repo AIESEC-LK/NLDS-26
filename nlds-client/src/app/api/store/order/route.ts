@@ -10,6 +10,11 @@ import { prisma } from "@/lib/backend/db/prisma";
 import { verifyTurnstileToken } from "@/lib/captcha";
 import { CLOSING_DEADLINE } from "@/lib/constants";
 import { getTimeRemaining } from "@/lib/utils";
+import {
+  getFlashRoundState,
+  FLASH_ROUND_ENABLED,
+  validateFlashRoundItem,
+} from "@/lib/flash-round/config";
 
 export const maxDuration = 60;
 
@@ -53,6 +58,7 @@ interface IncomingOrderItem {
 
 export async function POST(request: Request) {
   try {
+    // ── 1. Existing closing deadline check ───────────────────────────────────
     const timeLeft = getTimeRemaining(CLOSING_DEADLINE);
     const isClosed = timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0;
     
@@ -61,6 +67,31 @@ export async function POST(request: Request) {
         { error: "ORDERS CLOSED: The deadline has passed." },
         { status: 403 }
       );
+    }
+
+    // ── 2. Flash Round window check ──────────────────────────────────────────
+    // This check is authoritative — server clock determines Flash Round state.
+    // A LIVE Flash Round has its own closed/not-started gate independent of
+    // the normal CLOSING_DEADLINE.
+    if (FLASH_ROUND_ENABLED) {
+      const flashState = getFlashRoundState(new Date());
+
+      if (flashState === "CLOSED") {
+        return NextResponse.json(
+          { error: "FLASH ROUND CLOSED: The Flash Round ordering window has ended." },
+          { status: 403 },
+        );
+      }
+
+      if (flashState === "NOT_STARTED") {
+        return NextResponse.json(
+          { error: "FLASH ROUND NOT STARTED: The Flash Round has not opened yet." },
+          { status: 403 },
+        );
+      }
+
+      // flashState === "LIVE" — Flash Round item validation will happen below
+      // after we parse items.
     }
 
     const formData = await request.formData();
@@ -139,10 +170,37 @@ export async function POST(request: Request) {
       );
     }
 
+    // ── 3. Flash Round per-item validation ──────────────────────────────────
+    // Re-check Flash Round state here (after parsing), and validate each item.
+    // This prevents any crafted API request from bypassing the frontend filters.
+    if (FLASH_ROUND_ENABLED) {
+      const flashState = getFlashRoundState(new Date());
+
+      if (flashState === "LIVE") {
+        for (const item of items) {
+          const check = validateFlashRoundItem(
+            item.productId,
+            item.fit ?? null,
+            item.size ?? null,
+          );
+          if (!check.allowed) {
+            return NextResponse.json(
+              {
+                error: `FLASH ROUND RESTRICTION: ${check.reason}`,
+                rejectedItem: item.name,
+              },
+              { status: 403 },
+            );
+          }
+        }
+      }
+    }
+
     const totalAmount =
       parseInt(totalRaw, 10) ||
       items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
     const totalUnits = items.reduce((sum, i) => sum + i.quantity, 0);
+
 
     // Format human-readable item summary for Google Sheet
     const itemsSummary = items
