@@ -3,10 +3,13 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { REGISTRATION_OPEN } from "@/lib/constants";
+import { useClosingStatus } from "@/components/ui/Countdown";
 
 export default function AcceptMission() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { isClosed } = useClosingStatus();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -200,9 +203,19 @@ export default function AcceptMission() {
             marginBottom: "4rem",
           }}
         >
-          <Link href="/register" className="btn-mission" id="final-cta">
-            ACCEPT THE MISSION →
-          </Link>
+          {!isClosed && REGISTRATION_OPEN ? (
+            <Link href="/register" className="btn-mission" id="final-cta">
+              ACCEPT THE MISSION →
+            </Link>
+          ) : (
+            <button
+              className="btn-mission opacity-50 cursor-not-allowed"
+              id="final-cta"
+              disabled
+            >
+              REGISTRATIONS CLOSED
+            </button>
+          )}
           <button
             className="btn-ghost"
             onClick={() =>
