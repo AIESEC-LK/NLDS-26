@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage() {
-  // Show Coming Soon if registrations haven't opened yet
+  // Redirect to home if registrations haven't opened yet
   if (!REGISTRATION_OPEN) {
-    return <RegistrationComingSoon />;
+    redirect("/");
   }
 
   // Once registrations open, also check if the deadline has passed
