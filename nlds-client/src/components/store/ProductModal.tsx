@@ -622,7 +622,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                           THE ORDERING WINDOW HAS OFFICIALLY ENDED
                         </span>
                       </div>
-                    ) : !product.available ? (
+                    ) : !product.available || (FLASH_ROUND_ENABLED && flashState === "NOT_STARTED") ? (
                       <div
                         className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
                         style={{
@@ -743,7 +743,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                       THE ORDERING WINDOW HAS OFFICIALLY ENDED
                     </span>
                   </div>
-                ) : !product.available ? (
+                ) : !product.available || (FLASH_ROUND_ENABLED && flashState === "NOT_STARTED") ? (
                   <div
                     className="w-full flex flex-col items-center justify-center py-2.5 px-3 text-center"
                     style={{

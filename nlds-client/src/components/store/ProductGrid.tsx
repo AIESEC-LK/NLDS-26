@@ -28,15 +28,11 @@ export default function ProductGrid() {
   const visibleProducts: Product[] = (() => {
     // Before mount (SSR/hydration) — show all products to avoid layout flash
     if (!mounted) return PRODUCTS;
-    // Flash Round is LIVE → apply the allowed-product filter
-    if (FLASH_ROUND_ENABLED && state === "LIVE") {
+    // If Flash Round is enabled, only show Flash Round products (even before launch, so users can preview them)
+    if (FLASH_ROUND_ENABLED) {
       return PRODUCTS.filter((p) =>
         FLASH_ROUND_ALLOWED_PRODUCT_IDS.includes(p.id),
       );
-    }
-    // If Flash Round is active but not LIVE, hide the store completely
-    if (FLASH_ROUND_ENABLED && state !== "LIVE") {
-      return [];
     }
 
     // Fallback if Flash Round feature is disabled entirely
