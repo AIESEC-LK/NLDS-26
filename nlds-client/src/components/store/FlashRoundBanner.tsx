@@ -1,11 +1,13 @@
 "use client";
 
 /**
- * MERGE '26 — Flash Round Banner (v2 — Premium Redesign)
+ * MERGE '26 — Flash Round Banner (v3)
  *
- * NOT_STARTED → Gold tactical "⚡ FLASH ROUND COMING SOON" with countdown
- * LIVE        → Pulsing urgent "⚡ FLASH ROUND — LIVE" with closing countdown
- * CLOSED      → Muted "FLASH ROUND — MISSION COMPLETE"
+ * NOT_STARTED → "FLASH ROUND / COMING SOON" with countdown
+ * LIVE        → "FLASH ROUND / LIMITED MERCH DROP" with countdown
+ * CLOSED      → slim "FLASH ROUND — ORDERING CLOSED" strip
+ *
+ * No emojis. Proper margins. Dramatic section-break aesthetic.
  */
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,62 +15,81 @@ import { useFlashRound } from "@/lib/flash-round/useFlashRound";
 import { FLASH_ROUND_ENABLED } from "@/lib/flash-round/config";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
-const GOLD = "#F5C518";
-const GOLD_GLOW = "rgba(245,197,24,0.5)";
+const G = "#F5C518";          // gold
+const GD = "rgba(245,197,24,0.5)"; // gold glow
+const GB = "rgba(245,197,24,0.18)"; // gold border
+const GF = "rgba(245,197,24,0.06)"; // gold fill
 
-// ─── Digit Block ─────────────────────────────────────────────────────────────
-
-function DigitBlock({
-  value,
-  label,
-  live = false,
-}: {
-  value: string;
-  label: string;
-  live?: boolean;
-}) {
+// ─── Pulse dot (no emoji) ─────────────────────────────────────────────────────
+function PulseDot({ active }: { active: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-2">
+    <span className="relative inline-flex items-center justify-center w-2.5 h-2.5 flex-shrink-0">
+      {active && (
+        <motion.span
+          className="absolute inset-0 rounded-full"
+          style={{ background: G }}
+          animate={{ scale: [1, 2.5], opacity: [0.4, 0] }}
+          transition={{ duration: 1.1, repeat: Infinity, ease: "easeOut" }}
+        />
+      )}
+      <motion.span
+        className="relative w-1.5 h-1.5 rounded-full block"
+        style={{ background: G, boxShadow: active ? `0 0 8px ${GD}` : "none" }}
+        animate={active ? { opacity: [1, 0.3, 1] } : { opacity: 0.65 }}
+        transition={{ duration: 0.8, repeat: Infinity }}
+      />
+    </span>
+  );
+}
+
+// ─── Digit card ───────────────────────────────────────────────────────────────
+function Digit({ value, label, live }: { value: string; label: string; live: boolean }) {
+  return (
+    <div className="flex flex-col items-center" style={{ gap: "8px" }}>
+      {/* Card */}
       <div
         className="relative flex items-center justify-center overflow-hidden"
         style={{
-          width: "clamp(58px, 9vw, 82px)",
-          height: "clamp(66px, 10vw, 92px)",
-          background: live
-            ? "rgba(245,197,24,0.08)"
-            : "rgba(245,197,24,0.05)",
-          border: `1px solid ${live ? "rgba(245,197,24,0.55)" : "rgba(245,197,24,0.28)"}`,
+          width: "clamp(62px, 10vw, 88px)",
+          height: "clamp(70px, 11vw, 96px)",
+          background: live ? "rgba(245,197,24,0.09)" : GF,
+          border: `1px solid ${live ? "rgba(245,197,24,0.5)" : GB}`,
           boxShadow: live
-            ? `0 0 32px rgba(245,197,24,0.2), inset 0 0 20px rgba(245,197,24,0.07)`
-            : `0 0 12px rgba(245,197,24,0.07), inset 0 0 10px rgba(245,197,24,0.04)`,
+            ? `0 0 24px rgba(245,197,24,0.18), inset 0 0 18px rgba(245,197,24,0.06)`
+            : `inset 0 0 12px rgba(245,197,24,0.04)`,
         }}
       >
-        {/* Corner marks */}
-        <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2" style={{ borderColor: live ? GOLD : "rgba(245,197,24,0.5)" }} />
-        <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2" style={{ borderColor: live ? GOLD : "rgba(245,197,24,0.5)" }} />
-        <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2" style={{ borderColor: live ? GOLD : "rgba(245,197,24,0.5)" }} />
-        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2" style={{ borderColor: live ? GOLD : "rgba(245,197,24,0.5)" }} />
+        {/* 2px corner marks */}
+        <span className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2"
+          style={{ borderColor: live ? G : "rgba(245,197,24,0.5)" }} />
+        <span className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2"
+          style={{ borderColor: live ? G : "rgba(245,197,24,0.5)" }} />
+        <span className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2"
+          style={{ borderColor: live ? G : "rgba(245,197,24,0.5)" }} />
+        <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2"
+          style={{ borderColor: live ? G : "rgba(245,197,24,0.5)" }} />
 
-        {/* Scan-line overlay */}
-        <div
+        {/* Horizontal scanlines */}
+        <span
           className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(245,197,24,0.035) 3px, rgba(245,197,24,0.035) 4px)",
+            backgroundImage:
+              "repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(245,197,24,0.03) 3px,rgba(245,197,24,0.03) 4px)",
           }}
         />
 
-        {/* Digit */}
+        {/* Number */}
         <span
           className="font-display tabular-nums relative z-10 select-none"
           style={{
-            fontSize: "clamp(2rem, 5vw, 3.1rem)",
-            color: GOLD,
-            textShadow: live
-              ? `0 0 20px ${GOLD_GLOW}, 0 0 50px rgba(245,197,24,0.22)`
-              : `0 0 12px rgba(245,197,24,0.35)`,
+            fontSize: "clamp(2.1rem, 5vw, 3.2rem)",
             lineHeight: 1,
-            letterSpacing: "-0.01em",
-            marginTop: "4px",
+            color: G,
+            textShadow: live
+              ? `0 0 22px ${GD}, 0 0 50px rgba(245,197,24,0.2)`
+              : `0 0 14px rgba(245,197,24,0.35)`,
+            marginTop: "5px",
+            letterSpacing: "-0.02em",
           }}
         >
           {value}
@@ -77,11 +98,11 @@ function DigitBlock({
 
       {/* Label */}
       <span
-        className="font-classified uppercase select-none"
+        className="font-classified select-none uppercase"
         style={{
-          fontSize: "8px",
+          fontSize: "7.5px",
           letterSpacing: "0.32em",
-          color: live ? "rgba(245,197,24,0.7)" : "rgba(245,197,24,0.45)",
+          color: live ? "rgba(245,197,24,0.7)" : "rgba(245,197,24,0.42)",
         }}
       >
         {label}
@@ -90,26 +111,20 @@ function DigitBlock({
   );
 }
 
-// ─── Colon separator ─────────────────────────────────────────────────────────
-
-function ColonSep({ live = false }: { live?: boolean }) {
+// ─── Colon dots ───────────────────────────────────────────────────────────────
+function Sep({ live }: { live: boolean }) {
   return (
-    <div className="flex flex-col gap-2 pb-7" style={{ opacity: live ? 0.85 : 0.45 }}>
-      <div
-        className="w-[5px] h-[5px] rounded-full"
-        style={{ background: GOLD, boxShadow: live ? `0 0 9px ${GOLD_GLOW}` : "none" }}
-      />
-      <div
-        className="w-[5px] h-[5px] rounded-full"
-        style={{ background: GOLD, boxShadow: live ? `0 0 9px ${GOLD_GLOW}` : "none" }}
-      />
+    <div className="flex flex-col gap-2" style={{ paddingBottom: "28px", opacity: live ? 0.9 : 0.45 }}>
+      <span className="w-[5px] h-[5px] rounded-full block"
+        style={{ background: G, boxShadow: live ? `0 0 8px ${GD}` : "none" }} />
+      <span className="w-[5px] h-[5px] rounded-full block"
+        style={{ background: G, boxShadow: live ? `0 0 8px ${GD}` : "none" }} />
     </div>
   );
 }
 
-// ─── Product Tag ──────────────────────────────────────────────────────────────
-
-function ProductTag({ label }: { label: string }) {
+// ─── Pill tag ─────────────────────────────────────────────────────────────────
+function Tag({ label }: { label: string }) {
   return (
     <span
       className="font-classified uppercase"
@@ -117,9 +132,10 @@ function ProductTag({ label }: { label: string }) {
         fontSize: "8px",
         letterSpacing: "0.2em",
         color: "rgba(245,197,24,0.5)",
-        border: "1px solid rgba(245,197,24,0.18)",
-        padding: "3px 9px",
+        border: "1px solid rgba(245,197,24,0.2)",
+        padding: "4px 10px",
         background: "rgba(245,197,24,0.04)",
+        whiteSpace: "nowrap",
       }}
     >
       {label}
@@ -127,201 +143,202 @@ function ProductTag({ label }: { label: string }) {
   );
 }
 
-// ─── Main Banner ──────────────────────────────────────────────────────────────
-
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function FlashRoundBanner() {
   const { mounted, state, timeUntilStart, timeUntilEnd } = useFlashRound();
-
   if (!FLASH_ROUND_ENABLED || !mounted) return null;
 
-  const isLive = state === "LIVE";
-  const isClosed = state === "CLOSED";
-  const countdown = state === "NOT_STARTED" ? timeUntilStart : timeUntilEnd;
+  const live = state === "LIVE";
+  const closed = state === "CLOSED";
+  const cd = live ? timeUntilEnd : timeUntilStart;
 
-  const dd = String(countdown.days).padStart(2, "0");
-  const hh = String(countdown.hours).padStart(2, "0");
-  const mm = String(countdown.minutes).padStart(2, "0");
-  const ss = String(countdown.seconds).padStart(2, "0");
+  const dd = String(cd.days).padStart(2, "0");
+  const hh = String(cd.hours).padStart(2, "0");
+  const mm = String(cd.minutes).padStart(2, "0");
+  const ss = String(cd.seconds).padStart(2, "0");
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <motion.section
         key={state}
-        initial={{ opacity: 0, y: -14, scale: 0.99 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.99 }}
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-[800px] mx-auto mb-10"
-        role="status"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 8 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         aria-live="polite"
+        aria-label={`Flash Round: ${state}`}
+        className="w-full"
+        style={{ marginBottom: "clamp(2.5rem, 5vw, 4rem)" }}
       >
 
-        {/* ── CLOSED ── */}
-        {isClosed && (
+        {/* ── CLOSED: slim strip ── */}
+        {closed && (
           <div
-            className="relative flex items-center justify-center gap-5 py-4 px-6"
+            className="w-full flex items-center justify-center gap-5 py-3.5 px-6 relative"
             style={{
-              background: "rgba(196,30,58,0.05)",
-              border: "1px solid rgba(196,30,58,0.22)",
+              background: "rgba(196,30,58,0.06)",
+              border: "1px solid rgba(196,30,58,0.2)",
             }}
           >
-            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(196,30,58,0.55),transparent)" }} />
-            <span className="font-classified tracking-[0.32em] text-[9.5px]" style={{ color: "rgba(196,30,58,0.65)" }}>⚡ FLASH ROUND</span>
-            <div className="w-px h-4" style={{ background: "rgba(196,30,58,0.2)" }} />
-            <span className="font-classified tracking-[0.25em] text-[9.5px]" style={{ color: "rgba(255,255,255,0.28)" }}>MISSION COMPLETE — ORDERING CLOSED</span>
+            <div className="absolute inset-x-0 top-0 h-px"
+              style={{ background: "linear-gradient(90deg,transparent,rgba(196,30,58,0.5),transparent)" }} />
+            <span className="font-classified text-[9px] tracking-[0.32em] uppercase"
+              style={{ color: "rgba(196,30,58,0.6)" }}>FLASH ROUND</span>
+            <span className="w-px h-3.5 block" style={{ background: "rgba(196,30,58,0.2)" }} />
+            <span className="font-classified text-[9px] tracking-[0.24em] uppercase"
+              style={{ color: "rgba(255,255,255,0.25)" }}>ORDERING CLOSED</span>
           </div>
         )}
 
         {/* ── NOT_STARTED & LIVE ── */}
-        {!isClosed && (
+        {!closed && (
           <div
-            className="relative overflow-hidden"
+            className="relative w-full overflow-hidden"
             style={{
-              background: isLive
-                ? "linear-gradient(135deg, rgba(245,197,24,0.08) 0%, rgba(8,8,10,0.97) 55%, rgba(245,197,24,0.05) 100%)"
-                : "linear-gradient(135deg, rgba(245,197,24,0.05) 0%, rgba(6,6,8,0.98) 100%)",
-              border: `1px solid ${isLive ? "rgba(245,197,24,0.45)" : "rgba(245,197,24,0.22)"}`,
-              boxShadow: isLive
-                ? "0 0 70px rgba(245,197,24,0.1), 0 0 0 1px rgba(245,197,24,0.06)"
-                : "0 0 30px rgba(245,197,24,0.05)",
+              background: live
+                ? `linear-gradient(160deg, rgba(245,197,24,0.09) 0%, rgba(6,6,8,1) 50%, rgba(245,197,24,0.06) 100%)`
+                : `linear-gradient(160deg, rgba(245,197,24,0.06) 0%, rgba(6,6,8,1) 100%)`,
+              border: `1px solid ${live ? "rgba(245,197,24,0.42)" : "rgba(245,197,24,0.2)"}`,
+              boxShadow: live
+                ? `0 0 80px rgba(245,197,24,0.09), 0 0 0 1px rgba(245,197,24,0.05)`
+                : "none",
             }}
           >
-            {/* Animated shimmer sweep (LIVE only) */}
-            {isLive && (
+
+            {/* Animated shimmer on LIVE */}
+            {live && (
               <motion.div
                 className="absolute inset-y-0 pointer-events-none"
-                style={{ width: "35%", background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.05),transparent)" }}
-                animate={{ x: ["-35%", "210%"] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 2.5 }}
+                style={{ width: "40%", background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.045),transparent)" }}
+                animate={{ x: ["-40%", "200%"] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
               />
             )}
 
-            {/* Top gradient accent */}
+            {/* Top accent — 2px gradient bar (gold→red on LIVE, gold on NOT_STARTED) */}
             <div
-              className="absolute top-0 left-0 right-0 h-[2px]"
+              className="absolute inset-x-0 top-0 h-[2px]"
               style={{
-                background: isLive
-                  ? `linear-gradient(90deg, transparent 0%, ${GOLD} 35%, rgba(196,30,58,0.9) 65%, transparent 100%)`
-                  : `linear-gradient(90deg, transparent, rgba(245,197,24,0.65), transparent)`,
+                background: live
+                  ? `linear-gradient(90deg, transparent 0%, ${G} 30%, rgba(196,30,58,1) 70%, transparent 100%)`
+                  : `linear-gradient(90deg, transparent 0%, ${G} 50%, transparent 100%)`,
               }}
             />
 
             {/* Bottom accent */}
-            <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.2),transparent)" }} />
+            <div className="absolute inset-x-0 bottom-0 h-px"
+              style={{ background: `linear-gradient(90deg,transparent,rgba(245,197,24,0.22),transparent)` }} />
 
-            {/* Large corner marks */}
-            {["top-0 left-0 border-t-2 border-l-2","top-0 right-0 border-t-2 border-r-2","bottom-0 left-0 border-b-2 border-l-2","bottom-0 right-0 border-b-2 border-r-2"].map((cls, i) => (
-              <div key={i} className={`absolute w-6 h-6 ${cls}`} style={{ borderColor: isLive ? GOLD : "rgba(245,197,24,0.45)" }} />
+            {/* Corner marks 8×8 */}
+            {["top-0 left-0 border-t-2 border-l-2","top-0 right-0 border-t-2 border-r-2",
+              "bottom-0 left-0 border-b-2 border-l-2","bottom-0 right-0 border-b-2 border-r-2"].map((c, i) => (
+              <span key={i} className={`absolute w-8 h-8 ${c}`}
+                style={{ borderColor: live ? G : "rgba(245,197,24,0.42)" }} />
             ))}
 
-            {/* ── Content ── */}
-            <div className="relative z-10 flex flex-col items-center py-8 px-4 sm:px-10 gap-6">
+            {/* ── Inner layout ── */}
+            <div className="relative z-10 flex flex-col items-center text-center"
+              style={{ padding: "clamp(2rem, 5vw, 3rem) clamp(1.5rem, 6vw, 4rem)" }}>
 
-              {/* Status badge */}
-              <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center w-3 h-3">
-                  {isLive && (
-                    <motion.div
-                      className="absolute w-full h-full rounded-full"
-                      style={{ background: GOLD, opacity: 0.3 }}
-                      animate={{ scale: [1, 2.4], opacity: [0.3, 0] }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
-                    />
-                  )}
-                  <motion.div
-                    className="w-2 h-2 rounded-full"
-                    style={{ background: GOLD, boxShadow: isLive ? `0 0 10px ${GOLD_GLOW}` : "none" }}
-                    animate={isLive ? { opacity: [1, 0.25, 1] } : { opacity: 0.8 }}
-                    transition={{ duration: 0.75, repeat: Infinity }}
-                  />
-                </div>
-
+              {/* — Section label row — */}
+              <div className="flex items-center gap-3 mb-5">
+                <PulseDot active={live} />
                 <span
-                  className="font-classified uppercase"
-                  style={{ fontSize: "10px", letterSpacing: "0.4em", color: GOLD, fontWeight: 700 }}
+                  className="font-classified uppercase tracking-[0.42em]"
+                  style={{ fontSize: "9.5px", color: G, fontWeight: 700, letterSpacing: "0.42em" }}
                 >
-                  ⚡&nbsp; FLASH ROUND
+                  FLASH ROUND
                 </span>
-
-                {isLive && (
+                {live && (
                   <>
-                    <div className="w-px h-4" style={{ background: "rgba(245,197,24,0.3)" }} />
-                    <span className="font-classified uppercase" style={{ fontSize: "9px", letterSpacing: "0.3em", color: "rgba(245,197,24,0.7)" }}>
+                    <span className="w-px h-4 block" style={{ background: "rgba(245,197,24,0.3)" }} />
+                    <span className="font-classified uppercase" style={{ fontSize: "9px", letterSpacing: "0.3em", color: "rgba(245,197,24,0.65)" }}>
                       LIVE NOW
                     </span>
                   </>
                 )}
               </div>
 
-              {/* Headline */}
-              <div className="flex flex-col items-center gap-2 text-center">
-                <h3
-                  className="font-display leading-none"
-                  style={{
-                    fontSize: "clamp(2.6rem, 7vw, 4.2rem)",
-                    letterSpacing: "0.06em",
-                    color: GOLD,
-                    textShadow: isLive
-                      ? `0 0 35px ${GOLD_GLOW}, 0 0 70px rgba(245,197,24,0.2)`
-                      : `0 0 22px rgba(245,197,24,0.3)`,
-                  }}
-                >
-                  {isLive ? "LIMITED MERCH DROP" : "COMING SOON"}
-                </h3>
-
-                {/* Ends / Opens In label with flanking lines */}
-                <div className="flex items-center gap-4 mt-1">
-                  <div className="h-px w-14" style={{ background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.4))" }} />
-                  <span className="font-classified uppercase" style={{ fontSize: "9px", letterSpacing: "0.3em", color: "rgba(245,197,24,0.5)" }}>
-                    {isLive ? "ENDS IN" : "OPENS IN"}
-                  </span>
-                  <div className="h-px w-14" style={{ background: "linear-gradient(270deg,transparent,rgba(245,197,24,0.4))" }} />
-                </div>
-              </div>
-
-              {/* Countdown row */}
-              <div className="flex items-center justify-center gap-2 sm:gap-3">
-                <DigitBlock value={dd} label="DAYS" live={isLive} />
-                <ColonSep live={isLive} />
-                <DigitBlock value={hh} label="HRS" live={isLive} />
-                <ColonSep live={isLive} />
-                <DigitBlock value={mm} label="MIN" live={isLive} />
-                <ColonSep live={isLive} />
-                <DigitBlock value={ss} label="SEC" live={isLive} />
-              </div>
-
-              {/* Product tags row */}
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <ProductTag label="Regular T-Shirts (M/L)" />
-                <ProductTag label="Wristbands" />
-                <ProductTag label="Stickers" />
-                <ProductTag label="Bucket Hats" />
-              </div>
-
-              {/* Tactical metadata strip */}
-              <div
-                className="w-full flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 pt-4"
-                style={{ borderTop: "1px solid rgba(245,197,24,0.08)" }}
+              {/* — BIG headline — */}
+              <h2
+                className="font-display leading-none"
+                style={{
+                  fontSize: "clamp(3rem, 8vw, 5.5rem)",
+                  letterSpacing: "0.05em",
+                  color: G,
+                  textShadow: live
+                    ? `0 0 40px ${GD}, 0 0 80px rgba(245,197,24,0.18)`
+                    : `0 0 24px rgba(245,197,24,0.3)`,
+                  marginBottom: "0.6rem",
+                }}
               >
-                {[
-                  ["OPERATION", "MERGE'26"],
-                  ["CLASSIFICATION", "FLASH ACCESS"],
-                  ["WINDOW", isLive ? "OPEN" : "STANDBY"],
-                ].map(([k, v], i) => (
+                {live ? "LIMITED MERCH DROP" : "COMING SOON"}
+              </h2>
+
+              {/* Sub-label: opens/ends in */}
+              <div className="flex items-center gap-4 mb-6">
+                <span className="block h-px w-12"
+                  style={{ background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.45))" }} />
+                <span className="font-classified uppercase"
+                  style={{ fontSize: "9px", letterSpacing: "0.32em", color: "rgba(245,197,24,0.5)" }}>
+                  {live ? "ENDS IN" : "OPENS IN"}
+                </span>
+                <span className="block h-px w-12"
+                  style={{ background: "linear-gradient(270deg,transparent,rgba(245,197,24,0.45))" }} />
+              </div>
+
+              {/* — Countdown — */}
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-7">
+                <Digit value={dd} label="DAYS" live={live} />
+                <Sep live={live} />
+                <Digit value={hh} label="HRS" live={live} />
+                <Sep live={live} />
+                <Digit value={mm} label="MIN" live={live} />
+                <Sep live={live} />
+                <Digit value={ss} label="SEC" live={live} />
+              </div>
+
+              {/* — Product tags — */}
+              <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+                <Tag label="Regular T-Shirts (M / L)" />
+                <Tag label="Wristbands" />
+                <Tag label="Stickers" />
+                <Tag label="Bucket Hats" />
+              </div>
+
+              {/* — Metadata strip — */}
+              <div
+                className="w-full flex flex-wrap items-center justify-center gap-x-7 gap-y-2"
+                style={{
+                  paddingTop: "1.25rem",
+                  borderTop: "1px solid rgba(245,197,24,0.08)",
+                }}
+              >
+                {[["OPERATION","MERGE'26"],["CLASSIFICATION","FLASH ACCESS"],["WINDOW", live ? "OPEN" : "STANDBY"]].map(([k, v], i) => (
                   <div key={k} className="flex items-center gap-2">
-                    {i > 0 && <div className="hidden sm:block w-px h-3" style={{ background: "rgba(245,197,24,0.12)" }} />}
-                    <span className="font-classified" style={{ fontSize: "7.5px", letterSpacing: "0.22em", color: "rgba(245,197,24,0.3)" }}>{k}:</span>
-                    <span className="font-classified" style={{ fontSize: "7.5px", letterSpacing: "0.2em", color: v === "OPEN" ? GOLD : "rgba(245,197,24,0.55)", fontWeight: v === "OPEN" ? 700 : 400 }}>
-                      {v === "OPEN" ? `● ${v}` : v}
+                    {i > 0 && <span className="hidden sm:block w-px h-3" style={{ background: "rgba(245,197,24,0.14)" }} />}
+                    <span className="font-classified" style={{ fontSize: "7.5px", letterSpacing: "0.22em", color: "rgba(245,197,24,0.3)" }}>
+                      {k}:
+                    </span>
+                    <span
+                      className="font-classified"
+                      style={{
+                        fontSize: "7.5px",
+                        letterSpacing: "0.2em",
+                        color: v === "OPEN" ? G : "rgba(245,197,24,0.55)",
+                        fontWeight: v === "OPEN" ? 700 : 400,
+                      }}
+                    >
+                      {v === "OPEN" ? "● OPEN" : v}
                     </span>
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
         )}
-      </motion.div>
+
+      </motion.section>
     </AnimatePresence>
   );
 }
