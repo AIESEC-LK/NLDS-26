@@ -12,6 +12,13 @@ import { X, ShoppingBag, ArrowRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import FitSelector from "@/components/store/FitSelector";
 import { useClosingStatus } from "@/components/ui/Countdown";
+import { useFlashRound } from "@/lib/flash-round/useFlashRound";
+import {
+  FLASH_ROUND_ENABLED,
+  FLASH_ROUND_ALLOWED_FITS,
+  FLASH_ROUND_ALLOWED_TSHIRT_SIZES,
+  validateFlashRoundItem,
+} from "@/lib/flash-round/config";
 
 interface ProductModalProps {
   product: Product | null;
@@ -29,6 +36,38 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   const [fitError, setFitError] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { isClosed } = useClosingStatus();
+  const { state: flashState } = useFlashRound();
+
+  // Derive Flash Round constraints for this product
+  const isFlashLive = FLASH_ROUND_ENABLED && flashState === "LIVE";
+
+  /**
+   * During Flash Round, filter the sizes list to only M/L.
+   * For products without sizes (wristband, stickers, bucket hat), sizes=[]
+   * is unchanged.
+   */
+  const effectiveSizes: string[] = (() => {
+    if (!product) return [];
+    if (isFlashLive && product.sizes.length > 0) {
+      return product.sizes.filter((s) =>
+        FLASH_ROUND_ALLOWED_TSHIRT_SIZES.includes(s),
+      );
+    }
+    return product.sizes;
+  })();
+
+  /**
+   * During Flash Round, only the "Regular" fit type is shown.
+   */
+  const effectiveFitTypes: string[] | undefined = (() => {
+    if (!product?.fitTypes) return undefined;
+    if (isFlashLive) {
+      return product.fitTypes.filter((f) =>
+        FLASH_ROUND_ALLOWED_FITS.includes(f),
+      );
+    }
+    return product.fitTypes;
+  })();
 
   useEffect(() => {
     setMounted(true);
@@ -67,8 +106,8 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
     onClose();
   };
 
-  const requiresSize = product ? product.sizes.length > 0 : false;
-  const requiresFit = product ? (product.fitTypes?.length ?? 0) > 0 : false;
+  const requiresSize = product ? effectiveSizes.length > 0 : false;
+  const requiresFit = product ? (effectiveFitTypes?.length ?? 0) > 0 : false;
 
   // Compute the price to use based on selected fit (updates live as fit changes)
   const effectivePrice: number = product
@@ -101,6 +140,16 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
   function handleAddToCart() {
     if (!product || !product.available || !validateSize()) return;
+
+    // Flash Round frontend guard
+    if (isFlashLive) {
+      const check = validateFlashRoundItem(product.id, selectedFit, selectedSize);
+      if (!check.allowed) {
+        setSizeError(true);
+        return;
+      }
+    }
+
     addItem(product, selectedSize, selectedFit, quantity, effectivePrice);
     setToast("added");
     setTimeout(() => setToast(null), 2500);
@@ -108,6 +157,16 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
   function handleBuyNow() {
     if (!product || !product.available || !validateSize()) return;
+
+    // Flash Round frontend guard
+    if (isFlashLive) {
+      const check = validateFlashRoundItem(product.id, selectedFit, selectedSize);
+      if (!check.allowed) {
+        setSizeError(true);
+        return;
+      }
+    }
+
     // Override price in the product for BuyNow so checkout sees correct amount
     const productWithPrice = { ...product, price: effectivePrice };
     setBuyNow({ product: productWithPrice, size: selectedSize, fit: selectedFit, quantity });
@@ -431,13 +490,26 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     />
 
                     {/* Fit selector — Oversized / Regular */}
-                    {requiresFit && product.fitTypes && (
+                    {/* During Flash Round, effectiveFitTypes only contains "Regular" */}
+                    {requiresFit && effectiveFitTypes && (
                       <div
                         style={{ marginBottom: "0.5rem" }}
                         className="w-full text-left"
                       >
+                        {isFlashLive && (
+                          <p
+                            className="font-classified mb-1"
+                            style={{
+                              fontSize: "7.5px",
+                              letterSpacing: "0.14em",
+                              color: "rgba(255,210,0,0.7)",
+                            }}
+                          >
+                            ⚡ FLASH ROUND — REGULAR FIT ONLY
+                          </p>
+                        )}
                         <FitSelector
-                          fitTypes={product.fitTypes}
+                          fitTypes={effectiveFitTypes}
                           selected={selectedFit}
                           error={fitError}
                           onChange={(f) => {
@@ -461,13 +533,26 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     )}
 
                     {/* Size selector */}
+                    {/* During Flash Round, effectiveSizes only contains M and L */}
                     {requiresSize && (
                       <div
                         style={{ marginBottom: "0.5rem" }}
                         className="w-full text-left"
                       >
+                        {isFlashLive && (
+                          <p
+                            className="font-classified mb-1"
+                            style={{
+                              fontSize: "7.5px",
+                              letterSpacing: "0.14em",
+                              color: "rgba(255,210,0,0.7)",
+                            }}
+                          >
+                            ⚡ FLASH ROUND — M &amp; L ONLY
+                          </p>
+                        )}
                         <SizeSelector
-                          sizes={product.sizes}
+                          sizes={effectiveSizes}
                           selected={selectedSize}
                           sizeChart={product.sizeChart}
                           onChange={(s) => {

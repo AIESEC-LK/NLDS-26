@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
 import ClosingCountdown from "@/components/ui/Countdown";
+import FlashRoundBanner from "@/components/store/FlashRoundBanner";
 
 export default function StoreFront() {
   const ref = useRef<HTMLElement>(null);
@@ -218,6 +219,9 @@ export default function StoreFront() {
               }}
             />
           </motion.div>
+
+          {/* ── Flash Round Banner ─────────────────────── */}
+          <FlashRoundBanner />
 
           {/* ── Product Grid ───────────────────── */}
           <motion.div
