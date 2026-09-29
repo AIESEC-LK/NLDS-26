@@ -34,7 +34,12 @@ export default function ProductGrid() {
         FLASH_ROUND_ALLOWED_PRODUCT_IDS.includes(p.id),
       );
     }
-    // Normal mode (NOT_STARTED or CLOSED) → show everything
+    // If Flash Round is active but not LIVE, hide the store completely
+    if (FLASH_ROUND_ENABLED && state !== "LIVE") {
+      return [];
+    }
+
+    // Fallback if Flash Round feature is disabled entirely
     return PRODUCTS;
   })();
 
