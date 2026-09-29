@@ -269,34 +269,38 @@ export default function FlashRoundBanner() {
                   textShadow: live
                     ? `0 0 40px ${GD}, 0 0 80px rgba(245,197,24,0.18)`
                     : `0 0 24px rgba(245,197,24,0.3)`,
-                  marginBottom: "0.6rem",
+                  marginBottom: live ? "0.6rem" : "2rem",
                 }}
               >
                 {live ? "LIMITED MERCH DROP" : "COMING SOON"}
               </h2>
 
-              {/* Sub-label: opens/ends in */}
-              <div className="flex items-center gap-4 mb-6">
-                <span className="block h-px w-12"
-                  style={{ background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.45))" }} />
-                <span className="font-classified uppercase"
-                  style={{ fontSize: "9px", letterSpacing: "0.32em", color: "rgba(245,197,24,0.5)" }}>
-                  {live ? "ENDS IN" : "OPENS IN"}
-                </span>
-                <span className="block h-px w-12"
-                  style={{ background: "linear-gradient(270deg,transparent,rgba(245,197,24,0.45))" }} />
-              </div>
+              {live && (
+                <>
+                  {/* Sub-label: ends in */}
+                  <div className="flex items-center gap-4 mb-6">
+                    <span className="block h-px w-12"
+                      style={{ background: "linear-gradient(90deg,transparent,rgba(245,197,24,0.45))" }} />
+                    <span className="font-classified uppercase"
+                      style={{ fontSize: "9px", letterSpacing: "0.32em", color: "rgba(245,197,24,0.5)" }}>
+                      ENDS IN
+                    </span>
+                    <span className="block h-px w-12"
+                      style={{ background: "linear-gradient(270deg,transparent,rgba(245,197,24,0.45))" }} />
+                  </div>
 
-              {/* — Countdown — */}
-              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-7">
-                <Digit value={dd} label="DAYS" live={live} />
-                <Sep live={live} />
-                <Digit value={hh} label="HRS" live={live} />
-                <Sep live={live} />
-                <Digit value={mm} label="MIN" live={live} />
-                <Sep live={live} />
-                <Digit value={ss} label="SEC" live={live} />
-              </div>
+                  {/* — Countdown — */}
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 mb-7">
+                    <Digit value={dd} label="DAYS" live={live} />
+                    <Sep live={live} />
+                    <Digit value={hh} label="HRS" live={live} />
+                    <Sep live={live} />
+                    <Digit value={mm} label="MIN" live={live} />
+                    <Sep live={live} />
+                    <Digit value={ss} label="SEC" live={live} />
+                  </div>
+                </>
+              )}
 
               {/* — Product tags — */}
               <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
