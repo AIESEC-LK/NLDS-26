@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import RegistrationForm from "@/components/register/RegistrationForm";
-import RegistrationComingSoon from "@/components/register/RegistrationComingSoon";
-import { CLOSING_DEADLINE, REGISTRATION_OPEN } from "@/lib/constants";
-import { getTimeRemaining } from "@/lib/utils";
+import { REGISTRATION_OPEN } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Register — NLDS'26 | AIESEC in Sri Lanka",
@@ -14,18 +12,6 @@ export const metadata: Metadata = {
 export default function RegisterPage() {
   // Redirect to home if registrations haven't opened yet
   if (!REGISTRATION_OPEN) {
-    redirect("/");
-  }
-
-  // Once registrations open, also check if the deadline has passed
-  const timeLeft = getTimeRemaining(CLOSING_DEADLINE);
-  const isClosed =
-    timeLeft.days === 0 &&
-    timeLeft.hours === 0 &&
-    timeLeft.minutes === 0 &&
-    timeLeft.seconds === 0;
-
-  if (isClosed) {
     redirect("/");
   }
 
