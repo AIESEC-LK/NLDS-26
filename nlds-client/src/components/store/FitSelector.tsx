@@ -5,6 +5,7 @@ interface FitSelectorProps {
   selected: string | null;
   onChange: (fit: string) => void;
   error?: boolean;
+  unavailableFits?: string[];
 }
 
 export default function FitSelector({
@@ -12,6 +13,7 @@ export default function FitSelector({
   selected,
   onChange,
   error,
+  unavailableFits = [],
 }: FitSelectorProps) {
   if (!fitTypes || fitTypes.length === 0) return null;
 
@@ -45,35 +47,61 @@ export default function FitSelector({
       <div className="flex gap-2">
         {fitTypes.map((fit) => {
           const isActive = selected === fit;
+          const isUnavailable = unavailableFits.includes(fit);
           return (
             <button
               key={fit}
-              onClick={() => onChange(fit)}
-              className="flex-1 flex items-center justify-center py-2 px-3 transition-all duration-200"
+              onClick={() => !isUnavailable && onChange(fit)}
+              disabled={isUnavailable}
+              className="flex-1 flex flex-col items-center justify-center py-2 px-3 transition-all duration-200"
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: "10px",
                 letterSpacing: "0.14em",
                 fontWeight: 500,
-                color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
-                background: isActive
-                  ? "rgba(196,30,58,0.15)"
-                  : "rgba(255,255,255,0.03)",
-                border: isActive
-                  ? "1px solid var(--red)"
-                  : error
-                    ? "1px solid rgba(196,30,58,0.35)"
-                    : "1px solid rgba(255,255,255,0.12)",
-                cursor: "pointer",
+                color: isUnavailable
+                  ? "rgba(255,255,255,0.2)"
+                  : isActive
+                    ? "#fff"
+                    : "rgba(255,255,255,0.65)",
+                background: isUnavailable
+                  ? "rgba(255,255,255,0.02)"
+                  : isActive
+                    ? "rgba(196,30,58,0.15)"
+                    : "rgba(255,255,255,0.03)",
+                border: isUnavailable
+                  ? "1px dashed rgba(255,255,255,0.1)"
+                  : isActive
+                    ? "1px solid var(--red)"
+                    : error
+                      ? "1px solid rgba(196,30,58,0.35)"
+                      : "1px solid rgba(255,255,255,0.12)",
+                cursor: isUnavailable ? "not-allowed" : "pointer",
                 boxShadow: isActive
                   ? "0 0 8px rgba(196,30,58,0.25), inset 0 0 4px rgba(196,30,58,0.1)"
                   : "none",
               }}
               aria-pressed={isActive}
-              aria-label={`Fit: ${fit}`}
+              aria-disabled={isUnavailable}
+              aria-label={`Fit: ${fit}${isUnavailable ? " (out of stock)" : ""}`}
               id={`fit-${fit.toLowerCase()}`}
             >
-              {fit.toUpperCase()}
+              <span style={{ textDecoration: isUnavailable ? "line-through" : "none" }}>
+                {fit.toUpperCase()}
+              </span>
+              {isUnavailable && (
+                <span
+                  className="font-classified"
+                  style={{
+                    fontSize: "7px",
+                    letterSpacing: "0.16em",
+                    color: "rgba(255,255,255,0.25)",
+                    marginTop: "2px",
+                  }}
+                >
+                  OUT OF STOCK
+                </span>
+              )}
             </button>
           );
         })}

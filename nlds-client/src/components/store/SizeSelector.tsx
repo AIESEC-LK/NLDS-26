@@ -10,6 +10,7 @@ interface SizeSelectorProps {
   selected: string | null;
   onChange: (size: string) => void;
   sizeChart?: SizeChart;
+  unavailableSizes?: string[];
 }
 
 export default function SizeSelector({
@@ -17,6 +18,7 @@ export default function SizeSelector({
   selected,
   onChange,
   sizeChart,
+  unavailableSizes = [],
 }: SizeSelectorProps) {
   const [chartOpen, setChartOpen] = useState<"oversized" | "regular" | null>(
     null
@@ -71,29 +73,43 @@ export default function SizeSelector({
         <div className="flex flex-wrap gap-1 sm:gap-1.5">
           {sizes.map((size) => {
             const isActive = selected === size;
+            const isUnavailable = unavailableSizes.includes(size);
             return (
               <button
                 key={size}
-                onClick={() => onChange(size)}
+                onClick={() => !isUnavailable && onChange(size)}
+                disabled={isUnavailable}
                 className="transition-all duration-200 flex items-center justify-center min-w-[32px] sm:min-w-[40px] h-[28px] sm:h-[36px] px-1.5 sm:px-2.5 text-[9.5px] sm:text-[11px]"
                 style={{
                   fontFamily: "var(--font-mono)",
                   letterSpacing: "0.12em",
                   fontWeight: 500,
-                  color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
-                  background: isActive
-                    ? "rgba(196,30,58,0.15)"
-                    : "rgba(255,255,255,0.03)",
-                  border: isActive
-                    ? "1px solid var(--red)"
-                    : "1px solid rgba(255,255,255,0.12)",
-                  cursor: "pointer",
+                  color: isUnavailable
+                    ? "rgba(255,255,255,0.18)"
+                    : isActive
+                      ? "#fff"
+                      : "rgba(255,255,255,0.65)",
+                  background: isUnavailable
+                    ? "rgba(255,255,255,0.02)"
+                    : isActive
+                      ? "rgba(196,30,58,0.15)"
+                      : "rgba(255,255,255,0.03)",
+                  border: isUnavailable
+                    ? "1px dashed rgba(255,255,255,0.08)"
+                    : isActive
+                      ? "1px solid var(--red)"
+                      : "1px solid rgba(255,255,255,0.12)",
+                  cursor: isUnavailable ? "not-allowed" : "pointer",
                   boxShadow: isActive
                     ? "0 0 8px rgba(196,30,58,0.25), inset 0 0 4px rgba(196,30,58,0.1)"
                     : "none",
+                  textDecoration: isUnavailable ? "line-through" : "none",
+                  opacity: isUnavailable ? 0.5 : 1,
                 }}
                 aria-pressed={isActive}
-                aria-label={`Size ${size}`}
+                aria-disabled={isUnavailable}
+                aria-label={`Size ${size}${isUnavailable ? " (out of stock)" : ""}`}
+                title={isUnavailable ? "Out of stock" : undefined}
               >
                 {size}
               </button>

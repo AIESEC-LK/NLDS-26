@@ -11,13 +11,29 @@ export const EVENT_YEAR = 2026;
 /** ISO date strings — update when finalized */
 export const EVENT_START_DATE = "2026-10-01T08:00:00+05:30";
 export const EVENT_END_DATE = "2026-10-03T20:00:00+05:30";
-export const CLOSING_DEADLINE = "2026-10-01T12:00:00+05:30"; // Shared closing time
+
+/** Merch store order deadline */
+export const MERCH_CLOSING_DEADLINE = "2026-10-08T23:59:00+05:30";
+
+/** Registration deadline (used by Countdown on /register and store pages) */
+export const CLOSING_DEADLINE = MERCH_CLOSING_DEADLINE;
+
+/** Registration deadline — set in the past when registration period has ended */
+export const REG_CLOSING_DEADLINE = "2026-10-01T12:00:00+05:30";
 
 /**
- * Set to true to open registrations (show the form).
- * Set to false to show the Coming Soon screen.
+ * Set to true to make the /register page accessible.
+ * Set to false to redirect /register → home.
  */
 export const REGISTRATION_OPEN = true;
+
+/**
+ * Controls whether the "ACCEPT THE MISSION" CTA button is shown
+ * in Navbar, Hero, Footer and AcceptMission section.
+ * Set to false to show "REGISTRATIONS CLOSED" even if REGISTRATION_OPEN is true.
+ */
+export const SHOW_REGISTER_BUTTON = false;
+
 
 
 export const AIESEC_SL_URL = "https://www.aiesec.lk";

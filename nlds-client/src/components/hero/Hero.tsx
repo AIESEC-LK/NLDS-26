@@ -8,8 +8,8 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import ClosingCountdown, { useClosingStatus } from "@/components/ui/Countdown";
-import { REGISTRATION_OPEN } from "@/lib/constants";
+import { useClosingStatus } from "@/components/ui/Countdown";
+import { SHOW_REGISTER_BUTTON } from "@/lib/constants";
 
 type Phase = 0 | 1 | 2 | 3 | 4;
 
@@ -292,18 +292,7 @@ export default function Hero() {
               />
             </motion.div>
 
-            {/* Countdown */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0 }}
-              className="mt-4 mb-2"
-            >
-              <ClosingCountdown 
-                labelBefore="REGISTRATION FLASH ROUND CLOSES IN"
-                labelAfter="REGISTRATION FLASH ROUND CLOSED"
-              />
-            </motion.div>
+
 
             {/* CTA Buttons */}
             <motion.div
@@ -312,7 +301,7 @@ export default function Hero() {
               transition={{ delay: 1.1 }}
               className="flex flex-col sm:flex-row items-center gap-4 mt-4 pt-0"
             >
-              {!mounted || (!isClosed && REGISTRATION_OPEN) ? (
+              {!mounted || (!isClosed && SHOW_REGISTER_BUTTON) ? (
                 <Link href="/register" className="btn-mission" id="hero-cta">
                   ACCEPT THE MISSION →
                 </Link>

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { REGISTRATION_OPEN } from "@/lib/constants";
+import { SHOW_REGISTER_BUTTON } from "@/lib/constants";
 import { useClosingStatus } from "@/components/ui/Countdown";
 
 export default function AcceptMission() {
@@ -203,7 +203,7 @@ export default function AcceptMission() {
             marginBottom: "4rem",
           }}
         >
-          {!isClosed && REGISTRATION_OPEN ? (
+          {!isClosed && SHOW_REGISTER_BUTTON ? (
             <Link href="/register" className="btn-mission" id="final-cta">
               ACCEPT THE MISSION →
             </Link>

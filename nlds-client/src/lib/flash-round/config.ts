@@ -29,7 +29,7 @@
  * NOTE: Setting this to `true` does NOT open the Flash Round immediately.
  * The Flash Round will only become LIVE when currentTime >= FLASH_ROUND_START.
  */
-export const FLASH_ROUND_ENABLED = true;
+export const FLASH_ROUND_ENABLED = false;
 
 // ─── Schedule ────────────────────────────────────────────────────────────────
 

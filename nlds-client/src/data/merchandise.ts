@@ -21,6 +21,10 @@ export interface Product {
   itemCode: string;
   badge?: string; // e.g. "BEST VALUE", "LIMITED"
   sizeChart?: SizeChart; // optional size chart images for tshirts
+  /** Fits that are fully out of stock — shown disabled with OUT OF STOCK label */
+  unavailableFits?: string[];
+  /** Sizes that are out of stock for a given fit — shown disabled */
+  unavailableSizes?: Record<string, string[]>;
 }
 
 export const PRODUCTS: Product[] = [
@@ -45,6 +49,10 @@ export const PRODUCTS: Product[] = [
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
+    },
+    unavailableFits: ["Oversized"],
+    unavailableSizes: {
+      Regular: ["XS", "S", "XL", "XXL"],
     },
   },
   {
@@ -72,6 +80,10 @@ export const PRODUCTS: Product[] = [
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
+    },
+    unavailableFits: ["Oversized"],
+    unavailableSizes: {
+      Regular: ["XS", "S", "XL", "XXL"],
     },
   },
   {

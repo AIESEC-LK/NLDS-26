@@ -69,6 +69,18 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
     return product.fitTypes;
   })();
 
+  /** Fits that are out of stock (passed to FitSelector) */
+  const effectiveUnavailableFits: string[] = product?.unavailableFits ?? [];
+
+  /** Sizes that are out of stock for the currently selected fit (passed to SizeSelector) */
+  const effectiveUnavailableSizes: string[] = (() => {
+    if (!product?.unavailableSizes) return [];
+    if (selectedFit && product.unavailableSizes[selectedFit]) {
+      return product.unavailableSizes[selectedFit];
+    }
+    return [];
+  })();
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -109,6 +121,11 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   const requiresSize = product ? effectiveSizes.length > 0 : false;
   const requiresFit = product ? (effectiveFitTypes?.length ?? 0) > 0 : false;
 
+  /** True when the currently selected fit or size is flagged as unavailable */
+  const isSelectionUnavailable =
+    (selectedFit !== null && effectiveUnavailableFits.includes(selectedFit)) ||
+    (selectedSize !== null && effectiveUnavailableSizes.includes(selectedSize));
+
   // Compute the price to use based on selected fit (updates live as fit changes)
   const effectivePrice: number = product
     ? (selectedFit !== null && product.fitPrices?.[selectedFit] !== undefined
@@ -139,7 +156,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   }
 
   function handleAddToCart() {
-    if (!product || !product.available || !validateSize()) return;
+    if (!product || !product.available || isSelectionUnavailable || !validateSize()) return;
 
     // Flash Round frontend guard
     if (isFlashLive) {
@@ -156,7 +173,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   }
 
   function handleBuyNow() {
-    if (!product || !product.available || !validateSize()) return;
+    if (!product || !product.available || isSelectionUnavailable || !validateSize()) return;
 
     // Flash Round frontend guard
     if (isFlashLive) {
@@ -512,9 +529,17 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                           fitTypes={effectiveFitTypes}
                           selected={selectedFit}
                           error={fitError}
+                          unavailableFits={effectiveUnavailableFits}
                           onChange={(f) => {
                             setSelectedFit(f);
                             setFitError(false);
+                            // Clear size if it becomes unavailable for the new fit
+                            if (
+                              selectedSize &&
+                              product?.unavailableSizes?.[f]?.includes(selectedSize)
+                            ) {
+                              setSelectedSize(null);
+                            }
                           }}
                         />
                         {fitError && (
@@ -555,6 +580,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                           sizes={effectiveSizes}
                           selected={selectedSize}
                           sizeChart={product.sizeChart}
+                          unavailableSizes={effectiveUnavailableSizes}
                           onChange={(s) => {
                             setSelectedSize(s);
                             setSizeError(false);
@@ -655,18 +681,22 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                       <>
                         <button
                           onClick={handleBuyNow}
-                          className="btn-mission w-full flex items-center justify-center gap-1.5"
+                          disabled={isSelectionUnavailable}
+                          className={`btn-mission w-full flex items-center justify-center gap-1.5 ${isSelectionUnavailable ? "opacity-40 cursor-not-allowed" : ""}`}
                           style={{ padding: "9px 14px", fontSize: "11px" }}
                           id={`buynow-${product.id}`}
+                          title={isSelectionUnavailable ? "Selected option is out of stock" : undefined}
                         >
                           BUY NOW
                           <ArrowRight size={12} />
                         </button>
                         <button
                           onClick={handleAddToCart}
-                          className="btn-ghost w-full flex items-center justify-center gap-1.5"
+                          disabled={isSelectionUnavailable}
+                          className={`btn-ghost w-full flex items-center justify-center gap-1.5 ${isSelectionUnavailable ? "opacity-40 cursor-not-allowed" : ""}`}
                           style={{ padding: "7.5px 14px", fontSize: "10.5px" }}
                           id={`addtocart-${product.id}`}
+                          title={isSelectionUnavailable ? "Selected option is out of stock" : undefined}
                         >
                           <ShoppingBag size={12} />
                           ADD TO CART
@@ -803,18 +833,22 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     </AnimatePresence>
                     <button
                       onClick={handleBuyNow}
-                      className="btn-mission w-full flex items-center justify-center gap-1.5"
+                      disabled={isSelectionUnavailable}
+                      className={`btn-mission w-full flex items-center justify-center gap-1.5 ${isSelectionUnavailable ? "opacity-40 cursor-not-allowed" : ""}`}
                       style={{ padding: "10px 14px", fontSize: "11px" }}
                       id={`buynow-mobile-${product.id}`}
+                      title={isSelectionUnavailable ? "Selected option is out of stock" : undefined}
                     >
                       BUY NOW
                       <ArrowRight size={12} />
                     </button>
                     <button
                       onClick={handleAddToCart}
-                      className="btn-ghost w-full flex items-center justify-center gap-1.5"
+                      disabled={isSelectionUnavailable}
+                      className={`btn-ghost w-full flex items-center justify-center gap-1.5 ${isSelectionUnavailable ? "opacity-40 cursor-not-allowed" : ""}`}
                       style={{ padding: "8px 14px", fontSize: "10.5px" }}
                       id={`addtocart-mobile-${product.id}`}
+                      title={isSelectionUnavailable ? "Selected option is out of stock" : undefined}
                     >
                       <ShoppingBag size={12} />
                       ADD TO CART
