@@ -201,11 +201,11 @@ export default function Footer() {
               >
                 {FOOTER_LINKS.map((link) => {
                   const isLocked = link.locked || (link.label === "REGISTER" && mounted && (isClosed || !REGISTRATION_OPEN));
-                  const displayLabel = link.label === "REGISTER" && mounted && isClosed 
-                    ? "REGISTRATION CLOSED" 
+                  const displayLabel = link.label === "REGISTER" && mounted && isClosed
+                    ? "REGISTRATION CLOSED"
                     : link.label === "REGISTER" && mounted && !REGISTRATION_OPEN
-                    ? "REGISTRATIONS CLOSED"
-                    : link.label;
+                      ? "REGISTRATIONS CLOSED"
+                      : link.label;
 
                   return (
                     <li key={link.label}>
@@ -337,7 +337,7 @@ export default function Footer() {
                     color: "var(--text-muted)",
                   }}
                 >
-                  TO BE ANNOUNCED
+                  CAROLINA BEACH HOTEL, CHILLAW
                 </span>
               </div>
             </div>

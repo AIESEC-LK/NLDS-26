@@ -184,7 +184,7 @@ export default function CountdownSection() {
           className="font-classified text-[12px] tracking-[0.3em] text-[var(--text-muted)]"
           style={{ marginBottom: "4rem" }}
         >
-          09 OCTOBER 2026 // VENUE: TO BE ANNOUNCED
+          09 OCTOBER 2026 // VENUE: CAROLINA BEACH HOTEL, CHILLAW
         </motion.p>
 
         {/* Countdown cells */}
