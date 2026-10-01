@@ -337,7 +337,7 @@ export default function Footer() {
                     color: "var(--text-muted)",
                   }}
                 >
-                  CAROLINA BEACH HOTEL, CHILLAW
+                  CAROLINA BEACH RESORT, CHILLAW
                 </span>
               </div>
             </div>
