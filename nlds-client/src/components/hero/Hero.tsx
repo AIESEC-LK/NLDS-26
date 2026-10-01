@@ -310,7 +310,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.1 }}
-              className="flex flex-col sm:flex-row items-center gap-4 mt-0 pt-0"
+              className="flex flex-col sm:flex-row items-center gap-4 mt-4 pt-0"
             >
               {!mounted || (!isClosed && REGISTRATION_OPEN) ? (
                 <Link href="/register" className="btn-mission" id="hero-cta">

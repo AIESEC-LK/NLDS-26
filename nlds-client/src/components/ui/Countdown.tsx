@@ -12,11 +12,11 @@ export function useClosingStatus() {
     setMounted(true);
     // Initialize immediately in case of mismatch
     setTimeLeft(getTimeRemaining(CLOSING_DEADLINE));
-    
+
     const id = setInterval(() => {
       setTimeLeft(getTimeRemaining(CLOSING_DEADLINE));
     }, 1000);
-    
+
     return () => clearInterval(id);
   }, []);
 
@@ -113,14 +113,14 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
         {title && <div className="text-center mb-1">{title}</div>}
         <div className="flex items-center justify-center gap-3 sm:gap-4 w-full">
           <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(90deg, transparent, rgba(196,30,58,0.5))" }} />
-          <span 
-            className="font-classified text-[12px] sm:text-[14px] tracking-[0.25em] uppercase text-center font-bold"
+          <span
+            className="font-classified text-[12px] sm:text-[14px] tracking-[0.25em] uppercase text-center font-bold whitespace-nowrap"
             style={{
               color: "var(--red)",
               textShadow: "0 0 12px rgba(196,30,58,0.6)"
             }}
           >
-            REGISTRATION FLASH ROUND COMING SOON
+            FLASH ROUND REGISTRATIONS CLOSED!
           </span>
           <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(270deg, transparent, rgba(196,30,58,0.5))" }} />
         </div>
@@ -147,11 +147,11 @@ export default function ClosingCountdown({ title, labelBefore, labelAfter }: Clo
   return (
     <div className="flex flex-col items-center justify-center gap-4 sm:gap-5 mt-4 mb-6 w-full mx-auto">
       {title && <div className="text-center">{title}</div>}
-      
+
       {/* Tactical Label Row */}
       <div className="flex items-center justify-center gap-3 sm:gap-4 w-full">
         <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(90deg, transparent, rgba(196,30,58,0.5))" }} />
-        <span 
+        <span
           className="font-classified text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-center"
           style={{
             color: "var(--red)",
