@@ -52,7 +52,7 @@ export const PRODUCTS: Product[] = [
     },
     unavailableFits: ["Oversized"],
     unavailableSizes: {
-      Regular: ["XS", "S", "XL", "XXL"],
+      Regular: ["XS", "S", "M", "XL", "XXL"],
     },
   },
   {
@@ -83,7 +83,7 @@ export const PRODUCTS: Product[] = [
     },
     unavailableFits: ["Oversized"],
     unavailableSizes: {
-      Regular: ["XS", "S", "XL", "XXL"],
+      Regular: ["XS", "S", "M", "XL", "XXL"],
     },
   },
   {
