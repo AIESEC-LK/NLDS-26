@@ -159,16 +159,16 @@ export default function ProductCard({
                   src={imgSrc}
                   alt={`${product.name} ${idx + 1}`}
                   initial={false}
-                  animate={{ 
+                  animate={{
                     opacity: currentImageIdx === idx ? 1 : 0,
-                    scale: hovered ? 1.06 : 1 
+                    scale: hovered ? 1.06 : 1
                   }}
-                  transition={{ 
+                  transition={{
                     opacity: { duration: 0.9, ease: "easeInOut" },
-                    scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } 
+                    scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
                   }}
                   className="w-full h-full object-cover absolute inset-0"
-                  style={{ 
+                  style={{
                     pointerEvents: currentImageIdx === idx ? "auto" : "none",
                     zIndex: currentImageIdx === idx ? 1 : 0
                   }}
@@ -182,7 +182,7 @@ export default function ProductCard({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setCurrentImageIdx((prev) => 
+                      setCurrentImageIdx((prev) =>
                         prev === 0 ? product.images.length - 1 : prev - 1
                       );
                     }}
@@ -195,7 +195,7 @@ export default function ProductCard({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setCurrentImageIdx((prev) => 
+                      setCurrentImageIdx((prev) =>
                         (prev + 1) % product.images.length
                       );
                     }}
@@ -213,9 +213,8 @@ export default function ProductCard({
                           e.stopPropagation();
                           setCurrentImageIdx(i);
                         }}
-                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                          i === currentImageIdx ? "bg-white" : "bg-white/40 hover:bg-white/60"
-                        }`}
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === currentImageIdx ? "bg-white" : "bg-white/40 hover:bg-white/60"
+                          }`}
                         aria-label={`Go to image ${i + 1}`}
                       />
                     ))}
@@ -311,8 +310,8 @@ export default function ProductCard({
                 style={{
                   fontSize: "9px",
                   letterSpacing: "0.22em",
-                  color: isClosed 
-                    ? "var(--red)" 
+                  color: isClosed
+                    ? "var(--red)"
                     : product.available
                       ? "var(--red)"
                       : "rgba(255,255,255,0.45)",
@@ -388,17 +387,16 @@ export default function ProductCard({
 
             {/* CTA button */}
             <div
-              className={`flex items-center justify-center gap-2 px-4 py-[15px] mt-1 transition-all ${
-                !isClosed && product.available
-                  ? "bg-[var(--red)] text-white hover:bg-[var(--red-hover,rgb(220,38,38))]"
-                  : "bg-white/5 text-white/50 border border-white/10 group-hover:border-[var(--red)] group-hover:text-white/80"
-              }`}
+              className={`flex items-center justify-center gap-2 px-4 py-[15px] mt-1 transition-all ${!isClosed && product.available
+                ? "bg-[var(--red)] text-white hover:bg-[var(--red-hover,rgb(220,38,38))]"
+                : "bg-white/5 text-white/50 border border-white/10 group-hover:border-[var(--red)] group-hover:text-white/80"
+                }`}
               style={{
                 border: (!isClosed && product.available) ? "none" : undefined,
               }}
             >
               <span className="font-classified font-semibold text-[11px] tracking-[0.2em]">
-                {isClosed ? "ORDERS CLOSED — PREVIEW" : product.available ? "VIEW ITEM SPECIFICATIONS" : "COMING SOON — PREVIEW"}
+                {isClosed ? "ORDERS CLOSED — PREVIEW" : product.available ? "VIEW ITEM SPECIFICATIONS" : "OUT OF STOCK"}
               </span>
               <ArrowRight
                 size={14}

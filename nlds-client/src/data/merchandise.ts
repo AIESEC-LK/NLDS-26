@@ -43,9 +43,9 @@ export const PRODUCTS: Product[] = [
     ],
     sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     fitTypes: ["Oversized", "Regular"],
-    available: true,
+    available: false,
     itemCode: "NLDS26-001",
-    badge: "LIMITED STOCK",
+    badge: "OUT OF STOCK",
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
@@ -97,8 +97,9 @@ export const PRODUCTS: Product[] = [
     price: 350,
     images: ["https://res.cloudinary.com/daamlqcer/image/upload/v1789217450/1_imggci.png"],
     sizes: [], // no size selector needed
-    available: true,
+    available: false,
     itemCode: "NLDS26-003",
+    badge: "OUT OF STOCK",
   },
   {
     id: "stickers-001",
