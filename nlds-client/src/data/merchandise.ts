@@ -45,7 +45,7 @@ export const PRODUCTS: Product[] = [
     fitTypes: ["Oversized", "Regular"],
     available: true,
     itemCode: "NLDS26-001",
-    badge: "BEST VALUE",
+    badge: "LIMITED STOCK",
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
@@ -77,6 +77,7 @@ export const PRODUCTS: Product[] = [
     fitTypes: ["Oversized", "Regular"],
     available: true,
     itemCode: "NLDS26-002",
+    badge: "LIMITED STOCK",
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
