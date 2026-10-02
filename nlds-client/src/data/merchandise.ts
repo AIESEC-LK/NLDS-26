@@ -75,9 +75,9 @@ export const PRODUCTS: Product[] = [
     ],
     sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     fitTypes: ["Oversized", "Regular"],
-    available: true,
+    available: false,
     itemCode: "NLDS26-002",
-    badge: "LIMITED STOCK",
+    badge: "OUT OF STOCK",
     sizeChart: {
       oversized: "/images/merch/OverSize chart.jpg",
       regular: "/images/merch/RegularSize chart.jpg",
