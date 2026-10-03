@@ -25,7 +25,7 @@ export const REG_CLOSING_DEADLINE = "2026-10-01T12:00:00+05:30";
  * Set to true to make the /register page accessible.
  * Set to false to redirect /register → home.
  */
-export const REGISTRATION_OPEN = true;
+export const REGISTRATION_OPEN = false;
 
 /**
  * Controls whether the "ACCEPT THE MISSION" CTA button is shown
