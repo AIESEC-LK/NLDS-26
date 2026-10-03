@@ -32,7 +32,7 @@ export const REGISTRATION_OPEN = false;
  * in Navbar, Hero, Footer and AcceptMission section.
  * Set to false to show "REGISTRATIONS CLOSED" even if REGISTRATION_OPEN is true.
  */
-export const SHOW_REGISTER_BUTTON = false;
+export const SHOW_REGISTER_BUTTON = true;
 
 
 
